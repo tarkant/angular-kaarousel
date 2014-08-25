@@ -8,15 +8,13 @@ angular.module('angular-kaarousel', [
 
     return {
 
-      restrict: 'EAC',
+      restrict: 'EA',
 
       templateUrl: 'src/angular-kaarousel.html',
 
       transclude: true,
 
       priority: 1,
-
-      // scope: {},
 
       controller: function ($scope) {
 
@@ -42,23 +40,34 @@ angular.module('angular-kaarousel', [
         };
 
         self.goPrev = function ( userAction ) {
-          if ( userAction )  { 
-            self.setInterval( conf.shouldStopAfterUserAction );
-          }
+          self.cancelInterval(userAction);
           return self.goTo(self.computeIndex($scope.currentIndex - 1));          
         };
 
         self.goNext = function ( userAction ) {
-          if ( userAction )  { 
-            self.setInterval( conf.shouldStopAfterUserAction );
-            $scope.paused = true;
-          }
+          self.cancelInterval(userAction);
           return self.goTo(self.computeIndex($scope.currentIndex + 1));
         };
 
         self.goTo = function ( index ) {
           $scope.currentIndex = index;
+
+
+          var currentWidth = angular.element($scope.elements[index]).outerWidth(),
+              max = $scope.elements.length - $scope.displayed;
+          
+          $scope.margin = $scope.margin + ( index <= max ? currentWidth : 0 );
+
+          if ( index === 0 ) { $scope.margin = 0; }
+
+          $scope.kaarouselStyles['margin-left'] = - $scope.margin + 'px';
           return index;
+        };
+
+        self.cancelInterval = function ( action ) {
+          if ( action )  { 
+            self.setInterval( conf.shouldStopAfterUserAction );
+          }
         };
 
         self.setInterval = function ( shouldStop ) {
@@ -78,6 +87,13 @@ angular.module('angular-kaarousel', [
         scope.currentIndex = 0;
         scope.slides = [];
         scope.elements = [];
+
+        scope.displayed = 3;
+        scope.margin = 0;
+
+        scope.kaarouselStyles = {
+          'margin-left': '0px'
+        };
 
         controller.setInterval();
 
@@ -179,6 +195,24 @@ angular.module('angular-kaarousel', [
       link: function (scope, element, attrs, controller) {
         scope.goNext = function () {
           controller.goNext(true);
+        };
+      }
+
+    };
+
+  })
+
+  // PAGER
+  .directive('kaarouselPager', function () {
+
+    return {
+
+      require: '^kaarousel',
+      
+      link: function (scope, element, attrs, controller) {
+        scope.goTo = function ( index ) {
+          controller.cancelInterval(true);
+          controller.goTo( index );
         };
       }
 

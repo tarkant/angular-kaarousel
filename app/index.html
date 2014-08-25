@@ -46,8 +46,9 @@
           A full AngularJS carousel !
         </p>
         <p>
-          <div kaarousel>
-            <article kaarousel-slide="slide" ng-repeat="slide in data | orderBy:'rank'" class="col-sm-6 col-md-4" ng-class="{selected: $index === currentIndex}">
+          <div kaarousel class="kaarousel">
+            <span class="dummy" ng-style="kaarouselStyles"></span>
+            <article kaarousel-slide="slide" ng-repeat="slide in data | orderBy:'rank'" class="col-sm-6 col-md-4 kaarousel-slide" ng-class="{selected: $index === currentIndex}">
               <div class="thumbnail">
                 <img class="pull-right" ng-src="images/{{slide.logo}}" alt="{{slide.title}}">
                 <div class="caption">
