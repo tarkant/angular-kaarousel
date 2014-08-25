@@ -4,7 +4,7 @@ angular.module('angular-kaarousel', [
     'ngTouch'
   ])
 
-  .directive('kaarousel', function($interval) {
+  .directive('kaarousel', function($interval, $window, $timeout) {
 
     return {
 
@@ -27,6 +27,8 @@ angular.module('angular-kaarousel', [
         self.addSlide = function ( item, jElem ) {
           $scope.slides.push(item);
           $scope.elements.push(jElem);
+
+          $scope.widths.push(angular.element(jElem).outerWidth());
         };
 
         self.computeIndex = function ( index ) {
@@ -40,23 +42,21 @@ angular.module('angular-kaarousel', [
         };
 
         self.goPrev = function ( userAction ) {
-          self.cancelInterval(userAction);
+          self.setInterval(userAction && conf.shouldStopAfterUserAction);
           return self.goTo(self.computeIndex($scope.currentIndex - 1));          
         };
 
         self.goNext = function ( userAction ) {
-          self.cancelInterval(userAction);
+          self.setInterval(userAction && conf.shouldStopAfterUserAction);
           return self.goTo(self.computeIndex($scope.currentIndex + 1));
         };
 
         self.goTo = function ( index ) {
           $scope.currentIndex = index;
 
-
-          var currentWidth = angular.element($scope.elements[index]).outerWidth(),
-              max = $scope.elements.length - $scope.displayed;
+          var max = $scope.elements.length - $scope.displayed;
           
-          $scope.margin = $scope.margin + ( index <= max ? currentWidth : 0 );
+          $scope.margin = self.getMargin( index, max );
 
           if ( index === 0 ) { $scope.margin = 0; }
 
@@ -64,10 +64,16 @@ angular.module('angular-kaarousel', [
           return index;
         };
 
-        self.cancelInterval = function ( action ) {
-          if ( action )  { 
-            self.setInterval( conf.shouldStopAfterUserAction );
+        self.getMargin = function ( index, max ) {
+          var margin = 0;
+
+          for ( var j = 0; j < $scope.widths.length; j++ ) {
+            if ( j < index && j < max ) {
+              margin += $scope.widths[j];
+            }
           }
+
+          return margin;
         };
 
         self.setInterval = function ( shouldStop ) {
@@ -80,9 +86,24 @@ angular.module('angular-kaarousel', [
           }, 2000);          
         };
 
+        self.updateWidths = function () {
+          for ( var j = 0; j < $scope.elements.length; j++ ) {
+            $scope.widths[j] = angular.element($scope.elements[j]).outerWidth();
+          }
+        };
+
+        $scope.pause = function () {
+          self.setInterval( true );
+        };
+        $scope.resume = function () {
+          self.setInterval();
+        };
+
       },
 
       link: function (scope, element, attrs, controller) {
+
+        var windowTimeout;
 
         scope.currentIndex = 0;
         scope.slides = [];
@@ -90,12 +111,21 @@ angular.module('angular-kaarousel', [
 
         scope.displayed = 3;
         scope.margin = 0;
+        scope.widths = [];
 
         scope.kaarouselStyles = {
           'margin-left': '0px'
         };
 
         controller.setInterval();
+
+        angular.element($window).resize(function () {
+          $timeout.cancel(windowTimeout);
+          windowTimeout = $timeout(function () {
+            controller.updateWidths();
+            controller.goTo(scope.currentIndex);
+          }, 320);
+        });
 
         console.log(scope);
       }
@@ -211,7 +241,7 @@ angular.module('angular-kaarousel', [
       
       link: function (scope, element, attrs, controller) {
         scope.goTo = function ( index ) {
-          controller.cancelInterval(true);
+          controller.setInterval(true && scope.conf.shouldStopAfterUserAction);
           controller.goTo( index );
         };
       }
