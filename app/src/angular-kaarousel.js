@@ -20,6 +20,7 @@ angular.module('angular-kaarousel', [
 
         $scope.conf = {
           shouldStopAfterUserAction: false,
+          centerActive: true,
         };
 
         var self = this, conf = $scope.conf;
@@ -65,10 +66,10 @@ angular.module('angular-kaarousel', [
         };
 
         self.getMargin = function ( index, max ) {
-          var margin = 0;
+          var margin = 0, watchingUntil = conf.centerActive ? index - 1 : index;
 
           for ( var j = 0; j < $scope.widths.length; j++ ) {
-            if ( j < index && j < max ) {
+            if ( j < watchingUntil && j < max ) {
               margin += $scope.widths[j];
             }
           }
