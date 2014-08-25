@@ -1,0 +1,4 @@
+angular-kaarousel
+=================
+
+angularJS carousel
