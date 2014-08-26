@@ -9,8 +9,17 @@
 			margin: 0 auto;
 			width: 80%;
 
+			user-select: none;
+
 			.dummy {
 				transition: all .7s ease;
+			}
+			&.isMoving{
+				cursor: move;
+
+				.dummy {
+					transition: none;
+				}
 			}
 
 		}

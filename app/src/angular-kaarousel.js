@@ -31,6 +31,9 @@ angular.module('angular-kaarousel', [
         $scope.slides = [];
         $scope.elements = [];
 
+        $scope.swipeThreshold = 50;
+        $scope.swipeStageWidth = 200;
+
         $scope.userAction = false;
         $scope.margin = 0;
         $scope.widths = [];
@@ -71,12 +74,14 @@ angular.module('angular-kaarousel', [
           return index;
         };
 
-        self.goPrev = function ( userAction ) {          
-          return self.navTo( $scope.currentIndex - parseInt(conf.perSlide, 10) , userAction);
+        self.goPrev = function ( userAction, strength ) {
+          var index = $scope.currentIndex - ( strength || parseInt(conf.perSlide, 10));
+          return self.navTo( index , userAction);
         };
 
-        self.goNext = function ( userAction ) {
-          return self.navTo( $scope.currentIndex + parseInt(conf.perSlide, 10) , userAction);
+        self.goNext = function ( userAction, strength ) {
+          var index = $scope.currentIndex + ( strength || parseInt(conf.perSlide, 10));
+          return self.navTo( index , userAction);
         };
 
         self.navTo = function ( index, ua ) {
@@ -99,11 +104,21 @@ angular.module('angular-kaarousel', [
 
           var max = $scope.elements.length - conf.displayed;
 
-          $scope.margin = index === 0 ? index : self.getMargin( index, max );
-          $scope.currentIndex = index;
-          $scope.kaarouselStyles['margin-left'] = - $scope.margin + 'px';
+          $timeout( function () {
+            $scope.currentIndex = index;
+            $scope.margin = index === 0 ? index : self.getMargin( index, max );
+            $scope.kaarouselStyles['margin-left'] = - $scope.margin + 'px';
+          });
 
           return index;
+        };
+
+        self.move = function ( offset ) {
+          $timeout(function () {
+            var max = $scope.elements.length - conf.displayed;
+            var tmpMargin = self.getMargin( $scope.currentIndex, max ) + offset;
+            $scope.kaarouselStyles['margin-left'] = - tmpMargin + 'px';
+          });
         };
 
         self.getMargin = function ( index, max ) {
@@ -204,9 +219,7 @@ angular.module('angular-kaarousel', [
 
   .directive('kaarouselStyles', function () {
     return {
-      
       require: '^kaarousel',
-
       link: function (scope, iElement, iAttrs, controller) {
         scope.kaarouselStyles = controller.getStyles();
       }
@@ -214,15 +227,80 @@ angular.module('angular-kaarousel', [
   })
 
   // KAAROUSEL SLIDES WRAPPER
-  .directive('kaarouselWrapper', function () {
+  .directive('kaarouselWrapper', function ( $swipe, $timeout ) {
     
     return {
     
       require: '^kaarousel',
       scope: true,
     
-      link: function (scope, element) {
+      link: function (scope, element, attrs, controller) {
         scope.wrapperElement = element;
+        scope.isMoving = false;
+
+        var startCoords, lastCoords;
+
+        var shouldSwipe = function () {
+          return startCoords && lastCoords && Math.abs( startCoords.x - lastCoords.x ) > scope.swipeThreshold;
+        };
+
+        var getStrength = function () {
+          return Math.floor( Math.abs( startCoords.x - lastCoords.x ) / scope.swipeStageWidth ) + 1;
+        };
+
+        scope.swipeNext = function () {
+          if ( shouldSwipe() ) {
+            controller.goNext(true, getStrength());
+          }
+        };
+        scope.swipePrev = function () {
+          if ( shouldSwipe() ) {
+            controller.goPrev(true, getStrength());
+          }
+        };
+        scope.addSwipeOffset = function () {
+          var offset = startCoords.x - lastCoords.x;
+          controller.move(offset);
+        };
+        scope.resetSwipe = function () {
+          controller.goTo(scope.currentIndex);
+        };
+
+        scope.swipeHandler = $swipe.bind(element, {
+          start: function ( coords ) {
+            $timeout(function () {
+              startCoords = coords;
+              lastCoords = null;
+              scope.isMoving = true;              
+            });
+          },
+          move: function ( coords ) {
+            $timeout(function () {
+              lastCoords = coords;
+              scope.addSwipeOffset();
+              scope.isMoving = true;
+            });
+          },
+          end: function ( coords ) {
+            $timeout(function () {
+              lastCoords = coords;
+              var displacement = startCoords.x - lastCoords.x;
+              if ( !displacement ) {
+                scope.resetSwipe();
+              } else {
+                if ( displacement > 0 ) {
+                  scope.swipeNext();
+                } else {
+                  scope.swipePrev();
+                }
+              }
+              scope.isMoving = false;
+            });
+          },
+          cancel: function () {
+            scope.resetSwipe();
+          }
+        });
       }
     
     };
@@ -231,27 +309,19 @@ angular.module('angular-kaarousel', [
 
   // KAAROUSEL SLIDING ELEMENT
   .directive('kaarouselSlider', function () {
-    
     return {
-
       require: '^kaarousel',
       scope: true,
-      
       link: function (scope, element) {
         scope.sliderElement = element;
       }
-
     };
-
   })
 
   // KAAROUSEL SLIDE ITEM
   .directive('kaarouselSlide', function () {
-
     return {
-      
       require: '^kaarousel',
-      
       link: function (scope, element, attrs, controller) {
         
         controller.addSlide(scope.slide, element);
@@ -262,80 +332,57 @@ angular.module('angular-kaarousel', [
 
         scope.itemWidth = function() {
           return 100 / controller.getConf().displayed;
-        };
-        
+        };        
         scope.checkIndex = function ( index ) {
           return controller.getCurrentIndex() === index;
         };
       }
-    
     };
-
   })
 
   // KAAROUSEL NAVS
   .directive('kaarouselNav', function () {
-
     return {
-
       require: '^kaarousel',
-      
       link: function (scope, element) {
         scope.navElement = element;
       }
-    
     };
-
   })
 
   // PREV NAV
   .directive('kaarouselPrev', function () {
-
     return {
-
       require: '^kaarousel',
-      
       link: function (scope, element, attrs, controller) {
         scope.goPrev = function () {
           controller.goPrev(true);
         };
       }
-
     };
-
   })
 
   // NEXT NAV
   .directive('kaarouselNext', function () {
-
     return {
-
       require: '^kaarousel',
-      
       link: function (scope, element, attrs, controller) {
         scope.goNext = function () {
           controller.goNext(true);
         };
       }
-
     };
-
   })
 
   // PAGER
   .directive('kaarouselPager', function () {
-
     return {
-
-      require: '^kaarousel',
-      
+      require: '^kaarousel',      
       link: function (scope, element, attrs, controller) {
         scope.goTo = function ( index ) {
           controller.setInterval( controller.shouldStop() );
           controller.goTo( index );
         };
       }
-
     };
-
   });
