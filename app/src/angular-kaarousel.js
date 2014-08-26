@@ -14,13 +14,30 @@ angular.module('angular-kaarousel', [
 
       transclude: true,
 
-      priority: 1,
+      scope: {
+        displayed: '=',
+        perSlide: '=',
+        autoplay: '=',
+        centerActive: '='
+      },
 
-      controller: function ($scope) {
+      controller: function ($scope, $attrs) {
+
+        $scope.currentIndex = 0;
+
+        $scope.slides = [];
+        $scope.elements = [];
+
+        $scope.margin = 0;
+        $scope.widths = [];
 
         $scope.conf = {
-          shouldStopAfterUserAction: false,
-          centerActive: true,
+          shouldStopAfterUserAction: $scope.stopAfterAction || false,
+          centerActive: $scope.centerActive || false,
+        };
+
+        $scope.kaarouselStyles = {
+          'margin-left': '0px'
         };
 
         var self = this, conf = $scope.conf;
@@ -43,13 +60,25 @@ angular.module('angular-kaarousel', [
         };
 
         self.goPrev = function ( userAction ) {
-          self.setInterval(userAction && conf.shouldStopAfterUserAction);
-          return self.goTo(self.computeIndex($scope.currentIndex - 1));          
+          var tmpIndex = $scope.currentIndex - parseInt($scope.perSlide, 10);
+          self.setInterval(self.shouldStop());
+          return self.goTo(self.computeIndex(tmpIndex));          
         };
 
         self.goNext = function ( userAction ) {
-          self.setInterval(userAction && conf.shouldStopAfterUserAction);
-          return self.goTo(self.computeIndex($scope.currentIndex + 1));
+          var tmpIndex = $scope.currentIndex + parseInt($scope.perSlide, 10);
+          self.setInterval(self.shouldStop());
+          return self.goTo(self.computeIndex(tmpIndex));
+        };
+
+        self.shouldStop = function ( userAction ) {
+          if ( $scope.autoplay ) {
+            if ( userAction && conf.shouldStopAfterUserAction ) {
+              return true;
+            }
+            return false;
+          }
+          return true;
         };
 
         self.goTo = function ( index ) {
@@ -66,7 +95,7 @@ angular.module('angular-kaarousel', [
         };
 
         self.getMargin = function ( index, max ) {
-          var margin = 0, watchingUntil = conf.centerActive ? index - 1 : index;
+          var margin = 0, watchingUntil = (conf.centerActive && ( $scope.displayed & 1)) ? index - Math.floor( $scope.displayed / 2 ) : index;
 
           for ( var j = 0; j < $scope.widths.length; j++ ) {
             if ( j < watchingUntil && j < max ) {
@@ -79,9 +108,11 @@ angular.module('angular-kaarousel', [
 
         self.setInterval = function ( shouldStop ) {
           $interval.cancel($scope.interval);
+          $scope.playing = false;
 
           if ( shouldStop ) { return; }
 
+          $scope.playing = true;
           $scope.interval = $interval(function () {
             self.goNext();
           }, 2000);          
@@ -93,11 +124,28 @@ angular.module('angular-kaarousel', [
           }
         };
 
+        self.getStyles = function () {
+          return $scope.kaarouselStyles;
+        };
+
+        self.getCurrentIndex = function () {
+          return $scope.currentIndex;
+        };
+
+        self.lastOfItems = function () {
+          console.log('LAST ITEM IN NGREPEAT');
+        };
+
         $scope.pause = function () {
           self.setInterval( true );
         };
         $scope.resume = function () {
-          self.setInterval();
+          self.setInterval( self.shouldStop() );
+        };
+        this.updateKaarousel = function () {
+          self.setInterval( self.shouldStop() );
+          self.updateWidths();
+          self.goTo($scope.currentIndex);
         };
 
       },
@@ -106,33 +154,45 @@ angular.module('angular-kaarousel', [
 
         var windowTimeout;
 
-        scope.currentIndex = 0;
-        scope.slides = [];
-        scope.elements = [];
-
-        scope.displayed = 3;
-        scope.margin = 0;
-        scope.widths = [];
-
-        scope.kaarouselStyles = {
-          'margin-left': '0px'
-        };
-
-        controller.setInterval();
+        if ( scope.autoplay && !scope.playing ) {
+          controller.setInterval();
+        }
 
         angular.element($window).resize(function () {
           $timeout.cancel(windowTimeout);
           windowTimeout = $timeout(function () {
-            controller.updateWidths();
-            controller.goTo(scope.currentIndex);
+            controller.updateKaarousel();
           }, 320);
         });
 
-        console.log(scope);
+        scope.$watch('displayed', function () {
+          self.setInterval( true );
+          $timeout(function () {
+            controller.updateKaarousel();            
+          }, 300)
+        });
+
+        scope.$watch('autoplay', function () {
+          self.setInterval( true );
+          $timeout(function () {
+            controller.updateKaarousel();            
+          }, 300)
+        });
       }
 
     };
 
+  })
+
+  .directive('kaarouselStyles', function () {
+    return {
+      
+      require: '^kaarousel',
+
+      link: function (scope, iElement, iAttrs, controller) {
+        scope.kaarouselStyles = controller.getStyles();
+      }
+    };
   })
 
   // KAAROUSEL SLIDES WRAPPER
@@ -141,6 +201,7 @@ angular.module('angular-kaarousel', [
     return {
     
       require: '^kaarousel',
+      scope: true,
     
       link: function (scope, element) {
         scope.wrapperElement = element;
@@ -156,6 +217,7 @@ angular.module('angular-kaarousel', [
     return {
 
       require: '^kaarousel',
+      scope: true,
       
       link: function (scope, element) {
         scope.sliderElement = element;
@@ -172,12 +234,17 @@ angular.module('angular-kaarousel', [
       
       require: '^kaarousel',
       
-      scope: {
-        slide: '=kaarouselSlide'
-      },
-      
       link: function (scope, element, attrs, controller) {
+        
         controller.addSlide(scope.slide, element);
+
+        if ( scope.$last ) {
+          controller.lastOfItems();
+        }
+        
+        scope.checkIndex = function ( index ) {
+          return controller.getCurrentIndex() === index;
+        };
       }
     
     };

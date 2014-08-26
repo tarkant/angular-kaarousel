@@ -69,6 +69,11 @@ angular.module('myApp', [
         'logo': 'less.png'
       }
     ];
+
+    $scope.displayed = 3;
+    $scope.perSlide = 1;
+    $scope.autoplay = 1;
+
     angular.forEach($scope.data, function(awesomeThing) {
       awesomeThing.rank = Math.random();
     });
