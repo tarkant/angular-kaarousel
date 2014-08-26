@@ -18,7 +18,7 @@ gulp.task('styles', function () {
 gulp.task('scripts', function () {
   return gulp.src([
       'app/scripts/**/*.js',
-      'app/src/**/*.js'
+      'app/src/*.js'
     ])
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
@@ -91,4 +91,58 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['html', 'partials', 'images', 'fonts']);
+// gulp.task('build', ['html', 'partials', 'images', 'fonts']);
+
+gulp.task('jsify', ['clean'], function () {
+  return gulp.src('app/src/*.html')
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    }))
+    .pipe($.ngHtml2js({
+      moduleName: 'angularKaarousel',
+    }))
+    .pipe(gulp.dest('app/src/template'))
+    .pipe($.size());
+});
+
+gulp.task('doTheDistYall', ['jsify'], function () {
+
+  gulp.src('app/src/*.less')
+    .pipe($.plumber())
+    .pipe($.less())
+    .pipe($.autoprefixer('last 2 version'))
+    .pipe($.csso())
+    .pipe(gulp.dest('dist'))
+    .pipe($.size());
+
+  return gulp.src('app/src/**/*.js')
+    .pipe($.ngAnnotate())
+    .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
+    .pipe($.concat('angularKaarousel.js'))
+    .pipe(gulp.dest('dist'))
+    .pipe($.size());
+
+    // return gulp.src('app/*.html')
+    // .pipe($.inject(gulp.src('.tmp/partials/**/*.js'), {
+    //   read: false,
+    //   starttag: '<!-- inject:partials -->',
+    //   addRootSlash: false,
+    //   addPrefix: '../'
+    // }))
+    // .pipe($.useref.assets())
+    // .pipe($.rev())
+    // .pipe(jsFilter)
+    // .pipe(jsFilter.restore())
+    // .pipe(cssFilter)
+    // .pipe($.replace('bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap','fonts'))
+    // .pipe(cssFilter.restore())
+    // .pipe($.useref.restore())
+    // .pipe($.useref())
+    // .pipe($.revReplace())
+    // .pipe(gulp.dest('dist'))
+    // .pipe($.size());  
+});
+
+gulp.task('build', ['doTheDistYall']);

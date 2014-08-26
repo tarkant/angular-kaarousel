@@ -31,6 +31,7 @@ angular.module('angular-kaarousel', [
         $scope.slides = [];
         $scope.elements = [];
 
+        $scope.userAction = false;
         $scope.margin = 0;
         $scope.widths = [];
         $scope.kaarouselStyles = {
@@ -46,7 +47,7 @@ angular.module('angular-kaarousel', [
             autoplay: $scope.autoplay || false,
             centerActive: $scope.centerActive || false,
             timeInterval: $scope.timeInterval || 5000,
-            shouldStopAfterUserAction: $scope.stopAfterAction || false
+            stopAfterAction: $scope.stopAfterAction || false
           };
           return conf;
         };
@@ -70,21 +71,23 @@ angular.module('angular-kaarousel', [
           return index;
         };
 
-        self.goPrev = function ( userAction ) {
-          var tmpIndex = $scope.currentIndex - parseInt(conf.perSlide, 10);
-          self.setInterval(self.shouldStop(userAction));
-          return self.goTo(self.computeIndex(tmpIndex));          
+        self.goPrev = function ( userAction ) {          
+          return self.navTo( $scope.currentIndex - parseInt(conf.perSlide, 10) , userAction);
         };
 
         self.goNext = function ( userAction ) {
-          var tmpIndex = $scope.currentIndex + parseInt(conf.perSlide, 10);
-          self.setInterval(self.shouldStop(userAction));
-          return self.goTo(self.computeIndex(tmpIndex));
+          return self.navTo( $scope.currentIndex + parseInt(conf.perSlide, 10) , userAction);
         };
 
-        self.shouldStop = function ( userAction ) {
+        self.navTo = function ( index, ua ) {
+          if ( ua ) { $scope.userAction = true; }
+          self.setInterval(self.shouldStop());
+          return self.goTo(self.computeIndex(index));          
+        };
+
+        self.shouldStop = function () {
           if ( $scope.autoplay ) {
-            if ( (userAction && conf.shouldStopAfterUserAction) || $scope.pausedByUser ) {
+            if ( ($scope.userAction && conf.stopAfterAction) || $scope.pausedByUser ) {
               return true;
             }
             return false;
