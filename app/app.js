@@ -72,7 +72,13 @@ angular.module('myApp', [
 
     $scope.displayed = 3;
     $scope.perSlide = 1;
-    $scope.autoplay = 1;
+    $scope.autoplay = true;
+
+    $scope.shouldCenter = false;
+    $scope.stopAfterAction = false;
+    $scope.timeInterval = 3000;
+
+    $scope.updateRate = 300;
 
     angular.forEach($scope.data, function(awesomeThing) {
       awesomeThing.rank = Math.random();

@@ -41,7 +41,7 @@
       <div class="jumbotron text-center">
         <h1>angularKaarousel</h1>
         <p class="lead">
-          A full AngularJS carousel !
+          A full AngularJS carousel, Yay !
         </p>
         <form action="">
           <div class="form-group col-xs-4">
@@ -54,14 +54,50 @@
           </div>
           <div class="form-group col-xs-4">
             <label>Autoplay switch</label>
-            <input type="number" ng-model="autoplay" class="form-control">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input type="checkbox" ng-model="autoplay">
+              </span>
+              <input type="text" ng-model="autoplay" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-xs-4">
+            <label>Should center the active slide</label>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input type="checkbox" ng-model="shouldCenter">
+              </span>
+              <input type="text" ng-model="shouldCenter" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-xs-4">
+            <label>Should stop after user action</label>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input type="checkbox" ng-model="stopAfterAction">
+              </span>
+              <input type="text" ng-model="stopAfterAction" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-xs-4">
+            <label>Time interval</label>
+            <input type="number" ng-model="timeInterval" class="form-control">
           </div>
         </form>
 
         <!-- KAAROUSEL -->
-        <div kaarousel class="kaarousel" displayed="displayed" per-slide="perSlide" autoplay="autoplay" center-active="true">
+        <div class="kaarousel" 
+              kaarousel 
+              displayed="displayed" 
+              per-slide="perSlide" 
+              autoplay="autoplay" 
+              stop-after-action="stopAfterAction" 
+              time-interval="timeInterval" 
+              center-active="shouldCenter"
+              update-rate="updateRate">
+          
           <span class="dummy" ng-style="kaarouselStyles" kaarousel-styles></span>
-          <article kaarousel-slide="slide" ng-style="{'width': 100 / displayed + '%'}" ng-repeat="slide in data | orderBy:'rank'" class="kaarousel-slide" ng-class="{selected: checkIndex($index)}">
+          <article kaarousel-slide="slide" ng-style="{'width': itemWidth() + '%'}" ng-repeat="slide in data | orderBy:'rank'" class="kaarousel-slide" ng-class="{selected: checkIndex($index)}">
             <div class="thumbnail">
               <img class="pull-right" ng-src="images/{{slide.logo}}" alt="{{slide.title}}">
               <div class="caption">

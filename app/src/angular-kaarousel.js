@@ -18,10 +18,13 @@ angular.module('angular-kaarousel', [
         displayed: '=',
         perSlide: '=',
         autoplay: '=',
-        centerActive: '='
+        centerActive: '=',
+        timeInterval: '=',
+        updateRate: '=',
+        stopAfterAction: '=',
       },
 
-      controller: function ($scope, $attrs) {
+      controller: function ($scope) {
 
         $scope.currentIndex = 0;
 
@@ -30,18 +33,26 @@ angular.module('angular-kaarousel', [
 
         $scope.margin = 0;
         $scope.widths = [];
-
-        $scope.conf = {
-          shouldStopAfterUserAction: $scope.stopAfterAction || false,
-          centerActive: $scope.centerActive || false,
-        };
-
         $scope.kaarouselStyles = {
           'margin-left': '0px'
         };
 
-        var self = this, conf = $scope.conf;
+        var self = this, conf;
         
+        self.getConf = function () {
+          conf = $scope.conf = {
+            displayed : Math.abs($scope.displayed),
+            perSlide : $scope.perSlide,
+            autoplay: $scope.autoplay || false,
+            centerActive: $scope.centerActive || false,
+            timeInterval: $scope.timeInterval || 5000,
+            shouldStopAfterUserAction: $scope.stopAfterAction || false
+          };
+          return conf;
+        };
+
+        self.getConf();
+
         self.addSlide = function ( item, jElem ) {
           $scope.slides.push(item);
           $scope.elements.push(jElem);
@@ -60,20 +71,20 @@ angular.module('angular-kaarousel', [
         };
 
         self.goPrev = function ( userAction ) {
-          var tmpIndex = $scope.currentIndex - parseInt($scope.perSlide, 10);
-          self.setInterval(self.shouldStop());
+          var tmpIndex = $scope.currentIndex - parseInt(conf.perSlide, 10);
+          self.setInterval(self.shouldStop(userAction));
           return self.goTo(self.computeIndex(tmpIndex));          
         };
 
         self.goNext = function ( userAction ) {
-          var tmpIndex = $scope.currentIndex + parseInt($scope.perSlide, 10);
-          self.setInterval(self.shouldStop());
+          var tmpIndex = $scope.currentIndex + parseInt(conf.perSlide, 10);
+          self.setInterval(self.shouldStop(userAction));
           return self.goTo(self.computeIndex(tmpIndex));
         };
 
         self.shouldStop = function ( userAction ) {
           if ( $scope.autoplay ) {
-            if ( userAction && conf.shouldStopAfterUserAction ) {
+            if ( (userAction && conf.shouldStopAfterUserAction) || $scope.pausedByUser ) {
               return true;
             }
             return false;
@@ -82,20 +93,18 @@ angular.module('angular-kaarousel', [
         };
 
         self.goTo = function ( index ) {
+
+          var max = $scope.elements.length - conf.displayed;
+
+          $scope.margin = index === 0 ? index : self.getMargin( index, max );
           $scope.currentIndex = index;
-
-          var max = $scope.elements.length - $scope.displayed;
-          
-          $scope.margin = self.getMargin( index, max );
-
-          if ( index === 0 ) { $scope.margin = 0; }
-
           $scope.kaarouselStyles['margin-left'] = - $scope.margin + 'px';
+
           return index;
         };
 
         self.getMargin = function ( index, max ) {
-          var margin = 0, watchingUntil = (conf.centerActive && ( $scope.displayed & 1)) ? index - Math.floor( $scope.displayed / 2 ) : index;
+          var margin = 0, watchingUntil = self.getWatchUntil(index);
 
           for ( var j = 0; j < $scope.widths.length; j++ ) {
             if ( j < watchingUntil && j < max ) {
@@ -104,6 +113,13 @@ angular.module('angular-kaarousel', [
           }
 
           return margin;
+        };
+
+        self.getWatchUntil = function ( index ) {
+          if ( conf.centerActive && ( conf.displayed & 1) ) {
+            index = index - Math.floor( conf.displayed / 2 );
+          }
+          return index;
         };
 
         self.setInterval = function ( shouldStop ) {
@@ -115,7 +131,7 @@ angular.module('angular-kaarousel', [
           $scope.playing = true;
           $scope.interval = $interval(function () {
             self.goNext();
-          }, 2000);          
+          }, conf.timeInterval);          
         };
 
         self.updateWidths = function () {
@@ -137,9 +153,11 @@ angular.module('angular-kaarousel', [
         };
 
         $scope.pause = function () {
+          $scope.pausedByUser = true;
           self.setInterval( true );
         };
         $scope.resume = function () {
+          $scope.pausedByUser = false;
           self.setInterval( self.shouldStop() );
         };
         this.updateKaarousel = function () {
@@ -152,12 +170,13 @@ angular.module('angular-kaarousel', [
 
       link: function (scope, element, attrs, controller) {
 
-        var windowTimeout;
+        var windowTimeout, watchTimeout;
 
         if ( scope.autoplay && !scope.playing ) {
           controller.setInterval();
         }
 
+        // Update on window resize
         angular.element($window).resize(function () {
           $timeout.cancel(windowTimeout);
           windowTimeout = $timeout(function () {
@@ -165,19 +184,15 @@ angular.module('angular-kaarousel', [
           }, 320);
         });
 
-        scope.$watch('displayed', function () {
-          self.setInterval( true );
-          $timeout(function () {
-            controller.updateKaarousel();            
-          }, 300)
+        // Update when those guys change
+        scope.$watchCollection('[autoplay, displayed, centerActive, timeInterval, stopAfterAction]', function () {
+          $timeout.cancel(watchTimeout);
+          watchTimeout = $timeout( function () {
+            controller.getConf();
+            controller.updateKaarousel();
+          }, scope.updateRate);
         });
 
-        scope.$watch('autoplay', function () {
-          self.setInterval( true );
-          $timeout(function () {
-            controller.updateKaarousel();            
-          }, 300)
-        });
       }
 
     };
@@ -241,6 +256,10 @@ angular.module('angular-kaarousel', [
         if ( scope.$last ) {
           controller.lastOfItems();
         }
+
+        scope.itemWidth = function() {
+          return 100 / controller.getConf().displayed;
+        };
         
         scope.checkIndex = function ( index ) {
           return controller.getCurrentIndex() === index;
@@ -309,7 +328,7 @@ angular.module('angular-kaarousel', [
       
       link: function (scope, element, attrs, controller) {
         scope.goTo = function ( index ) {
-          controller.setInterval(true && scope.conf.shouldStopAfterUserAction);
+          controller.setInterval( controller.shouldStop() );
           controller.goTo( index );
         };
       }
