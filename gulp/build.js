@@ -123,26 +123,7 @@ gulp.task('doTheDistYall', ['jsify'], function () {
     .pipe($.concat('angularKaarousel.js'))
     .pipe(gulp.dest('dist'))
     .pipe($.size());
-
-    // return gulp.src('app/*.html')
-    // .pipe($.inject(gulp.src('.tmp/partials/**/*.js'), {
-    //   read: false,
-    //   starttag: '<!-- inject:partials -->',
-    //   addRootSlash: false,
-    //   addPrefix: '../'
-    // }))
-    // .pipe($.useref.assets())
-    // .pipe($.rev())
-    // .pipe(jsFilter)
-    // .pipe(jsFilter.restore())
-    // .pipe(cssFilter)
-    // .pipe($.replace('bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap','fonts'))
-    // .pipe(cssFilter.restore())
-    // .pipe($.useref.restore())
-    // .pipe($.useref())
-    // .pipe($.revReplace())
-    // .pipe(gulp.dest('dist'))
-    // .pipe($.size());  
+    
 });
 
 gulp.task('build', ['doTheDistYall']);

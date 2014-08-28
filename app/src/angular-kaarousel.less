@@ -2,7 +2,7 @@
 	.kaarousel{
 
 		position: relative;
-		margin-top: 20px;
+		clear: both;
 
 		.kaarousel-wrapper{
 			overflow: hidden;
@@ -12,14 +12,16 @@
 			user-select: none;
 
 			.dummy {
-				transition: all .7s ease;
+				transition: none;
 			}
-			&.isMoving{
-				cursor: move;
+			&.shouldAnim{
 
 				.dummy {
-					transition: none;
+					transition: all .7s ease;
 				}
+			}
+			&.dragging {
+				cursor: move;
 			}
 
 		}

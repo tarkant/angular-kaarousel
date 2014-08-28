@@ -14,8 +14,8 @@ gulp.task('wiredep', function () {
 
   gulp.src('app/*.html')
     .pipe(wiredep({
-      directory: 'app/bower_components',
-      exclude: ['bootstrap']
+      directory: 'app/bower_components'
+      // exclude: ['bootstrap']
     }))
     .pipe(gulp.dest('app'));
 });
