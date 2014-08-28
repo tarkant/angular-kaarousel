@@ -43,47 +43,138 @@
         <p class="lead">
           A full AngularJS carousel, Yay !
         </p>
-        <form action="">
-          <div class="form-group col-xs-4">
-            <label>Displayed elements</label>
-            <input type="number" ng-model="displayed" class="form-control">
-          </div>
-          <div class="form-group col-xs-4">
-            <label>Sliding n at the time</label>
-            <input type="number" ng-model="perSlide" class="form-control">
-          </div>
-          <div class="form-group col-xs-4">
-            <label>Autoplay switch</label>
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" ng-model="autoplay">
-              </span>
-              <input type="text" ng-model="autoplay" class="form-control">
+
+        <!-- OPTIONS -->
+        <div class="settings">
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#basic-tab" role="tab" data-toggle="tab">Basic Options</a></li>
+            <li><a href="#controls-tab" role="tab" data-toggle="tab">Controls / Pager</a></li>
+            <li><a href="#advanced-tab" role="tab" data-toggle="tab">Advanced Options</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="basic-tab">
+              <div class="form-group col-xs-4">
+                <label>Displayed elements</label>
+                <input type="number" ng-model="displayed" class="form-control">
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Sliding n at the time</label>
+                <input type="number" ng-model="perSlide" class="form-control">
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Time interval</label>
+                <input type="number" ng-model="timeInterval" class="form-control">
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Autoplay switch</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="autoplay">
+                  </span>
+                  <input type="text" ng-model="autoplay" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Pause on hover</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="pauseOnHover">
+                  </span>
+                  <input type="text" ng-model="pauseOnHover" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Allow swiping</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="swipable">
+                  </span>
+                  <input type="text" ng-model="swipable" class="form-control">
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="form-group col-xs-4">
-            <label>Should center the active slide</label>
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" ng-model="shouldCenter">
-              </span>
-              <input type="text" ng-model="shouldCenter" class="form-control">
+            <div class="tab-pane" id="controls-tab">
+              <div class="form-group col-xs-6">
+                <label>Hide Prev/Next nav</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="hideNav">
+                  </span>
+                  <input type="text" ng-model="hideNav" class="form-control">
+                </div>
+              </div>              
+              <div class="form-group col-xs-6">
+                <label>Show nav on hover</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="navOnHover">
+                  </span>
+                  <input type="text" ng-model="navOnHover" class="form-control">
+                </div>
+              </div>              
+              <div class="form-group col-xs-6">
+                <label>Hide pager</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="hidePager">
+                  </span>
+                  <input type="text" ng-model="hidePager" class="form-control">
+                </div>
+              </div>              
+              <div class="form-group col-xs-6">
+                <label>Show pager on hover</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="pagerOnHover">
+                  </span>
+                  <input type="text" ng-model="pagerOnHover" class="form-control">
+                </div>
+              </div>            
             </div>
-          </div>
-          <div class="form-group col-xs-4">
-            <label>Should stop after user action</label>
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" ng-model="stopAfterAction">
-              </span>
-              <input type="text" ng-model="stopAfterAction" class="form-control">
+            <div class="tab-pane" id="advanced-tab">
+              <div class="form-group col-xs-4">
+                <label>Should center the active slide</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="shouldCenter">
+                  </span>
+                  <input type="text" ng-model="shouldCenter" class="form-control">
+                </div>
+              </div>              
+              <div class="form-group col-xs-4">
+                <label>Should stop after user action</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="stopAfterAction">
+                  </span>
+                  <input type="text" ng-model="stopAfterAction" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Should sync with something</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="syncing"> ( {{sync}} )
+                  </span>
+                  <input type="text" ng-model="syncing" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Should go Right to Left</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="rtl">
+                  </span>
+                  <input type="text" ng-model="rtl" class="form-control">
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="form-group col-xs-4">
-            <label>Time interval</label>
-            <input type="number" ng-model="timeInterval" class="form-control">
-          </div>
-        </form>
+          </div>        
+        </div>
 
         <!-- KAAROUSEL -->
         <div class="kaarousel" 
@@ -91,10 +182,19 @@
               displayed="displayed" 
               per-slide="perSlide" 
               autoplay="autoplay" 
+              pause-on-hover="pauseOnHover" 
               stop-after-action="stopAfterAction" 
               time-interval="timeInterval" 
               center-active="shouldCenter"
-              update-rate="updateRate">
+              update-rate="updateRate"
+              hide-nav="hideNav"
+              hide-pager="hidePager"
+              nav-on-hover="navOnHover"
+              pager-on-hover="pagerOnHover"
+              kaa-swipable="swipable"
+              sync="sync"
+              rtl="rtl"
+              data="data">
           
           <span class="dummy" ng-style="kaarouselStyles" kaarousel-styles></span>
           <article kaarousel-slide="slide" ng-style="{'width': itemWidth() + '%'}" ng-repeat="slide in data | orderBy:'rank'" class="kaarousel-slide" ng-class="{selected: checkIndex($index)}">
@@ -140,6 +240,7 @@
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
