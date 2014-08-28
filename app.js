@@ -3,7 +3,7 @@
 angular.module('myApp', [
     'angular-kaarousel'
   ])
-  .controller('MainCtrl', function ($scope) {
+  .controller('MainCtrl', function ($scope, $interval) {
     $scope.data = [
       {
         'key': 'angular',
@@ -70,13 +70,34 @@ angular.module('myApp', [
       }
     ];
 
+
+    $interval(function () {
+      if ( !$scope.syncing ) {
+        $scope.sync = null;
+        return;  
+      }
+      $scope.sync++;
+      $scope.sync = $scope.sync > $scope.data.length - 1 ? 0 : $scope.sync; 
+    }, 2000);
+
     $scope.displayed = 3;
     $scope.perSlide = 1;
     $scope.autoplay = true;
+    $scope.pauseOnHover = true;
 
     $scope.shouldCenter = false;
     $scope.stopAfterAction = false;
-    $scope.timeInterval = 3000;
+    $scope.timeInterval = 1000;
+
+    $scope.hideNav = true;
+    $scope.hidePager = true;
+    $scope.navOnHover = true;
+    $scope.pagerOnHover = true;
+
+    $scope.swipable = true;
+    $scope.syncing = false;
+    $scope.rtl = false;
+    $scope.sync = $scope.syncing ? 0 : null;
 
     $scope.updateRate = 300;
 
