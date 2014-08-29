@@ -78,7 +78,7 @@ angular.module('myApp', [
       }
       $scope.sync++;
       $scope.sync = $scope.sync > $scope.data.length - 1 ? 0 : $scope.sync; 
-    }, 2000);
+    }, 3000);
 
     $scope.displayed = 3;
     $scope.perSlide = 1;
@@ -89,10 +89,10 @@ angular.module('myApp', [
     $scope.stopAfterAction = false;
     $scope.timeInterval = 1000;
 
-    $scope.hideNav = true;
-    $scope.hidePager = true;
-    $scope.navOnHover = true;
-    $scope.pagerOnHover = true;
+    $scope.hideNav = false;
+    $scope.hidePager = false;
+    $scope.navOnHover = false;
+    $scope.pagerOnHover = false;
 
     $scope.swipable = true;
     $scope.syncing = false;
