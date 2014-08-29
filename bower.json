@@ -1,16 +1,19 @@
 {
   "name": "angularKaarousel",
   "version": "0.0.0",
+  "main": [
+    "dist/angular-kaarousel.js",
+    "dist/angular-kaarousel.css"
+  ],
   "dependencies": {
     "angular": "1.2.x",
     "jquery": "1.x.x",
-    "angular-animate": "1.2.x",
-    "angular-touch": "1.2.x",
-    "bootstrap": "3.2.x",
-    "angular-ui-bootstrap": "~0.11.0"
+    "angular-touch": "1.2.x"
   },
   "devDependencies": {
     "modernizr": "2.8.x",
-    "angular-mocks": "1.2.x"
+    "angular-mocks": "1.2.x",
+    "bootstrap": "3.2.x",
+    "angular-ui-bootstrap": "~0.11.0"
   }
 }
