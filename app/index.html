@@ -194,18 +194,14 @@
               sync="sync"
               rtl="rtl"
               data="data"
-              animation="slide">
-
-          <kaarousel-slide 
+              animation="'slide'"><kaarousel-slide 
               slide="slide" 
-              ng-style="itemStyles($index)" 
+              ng-style="itemStyles()"
               ng-repeat="slide in data | orderBy:'rank' track by $index" 
-              ng-class="{selected: checkIndex($index), visible: isVisible($index)}">
+              ng-class="{selected: isActive(), visible: isVisible()}">
             <!-- Whaterver you want to put in the slide -->
             <ng-include src="'slide-tpl.html'"></ng-include>
-          </kaarousel-slide>
-
-        </kaarousel>
+          </kaarousel-slide></kaarousel>
         
         <!-- / KAAROUSEL -->
 
@@ -213,14 +209,14 @@
       </div>
 
       <div class="jumbotron text-center">
-        <kaarousel class="image-slider" displayed="1" animation="fade" per-slide="1" time-interval="3500" data="images">
-          <kaarousel-slide slide="image"
+        <kaarousel class="image-slider" 
+          options="optionsII" 
+          data="images"><kaarousel-slide slide="image"
             ng-repeat="image in images track by $index" 
-            ng-style="itemStyles($index)"
-            ng-class="{selected: checkIndex($index), visible: isVisible($index)}"> 
-            <img ng-src="{{image.url}}" >
-          </kaarousel-slide>
-        </kaarousel>
+            ng-style="itemStyles()"
+            ng-class="{selected: isActive(), visible: isVisible()}"> 
+            <img ng-src="{{image.url}}" kaarousel-image>
+          </kaarousel-slide></kaarousel>
       </div>
       
       <hr>

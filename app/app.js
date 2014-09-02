@@ -145,7 +145,15 @@ angular.module('myApp', [
 
     $scope.updateRate = 300;
 
-    angular.forEach($scope.data, function(awesomeThing) {
-      awesomeThing.rank = Math.random();
-    });
+    $scope.optionsII = {
+      displayed : 1, 
+      loop : true, 
+      animation : 'fade', 
+      perSlide : 1,
+      timeInterval : 3500
+    };
+
+    // angular.forEach($scope.data, function(awesomeThing) {
+    //   awesomeThing.rank = Math.random();
+    // });
   });

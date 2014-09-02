@@ -27,6 +27,10 @@
 			}
 			&.dragging {
 				cursor: move;
+
+				a {
+					pointer-events: none;
+				}
 			}
 
 		}
@@ -47,9 +51,14 @@
 				float: none;
 
 				white-space: normal;
+
+				img {
+					pointer-events: none
+				}
 			}
 
 			&.slide-animation {}
+			
 			&.fade-animation {
 				.kaarousel-slide {
 					position: absolute;
