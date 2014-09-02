@@ -101,6 +101,7 @@ gulp.task('jsify', ['clean'], function () {
       quotes: true
     }))
     .pipe($.ngHtml2js({
+      prefix: 'src/',
       moduleName: 'angular-kaarousel',
     }))
     .pipe(gulp.dest('app/src/template'))
