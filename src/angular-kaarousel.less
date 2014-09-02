@@ -5,19 +5,22 @@
 		display: block;
 		clear: both;
 
+		// WRAPPER
+
 		.kaarousel-wrapper{
 			display: block;
 			overflow: hidden;
 			margin: 0 auto;
 			width: 80%;
-
 			user-select: none;
 
 			.dummy {
 				transition: none;
+				display: inline-block;
+				vertical-align: top;
 			}
-			&.shouldAnim{
 
+			&.shouldAnim{
 				.dummy {
 					transition: all .7s ease;
 				}
@@ -27,6 +30,8 @@
 			}
 
 		}
+
+		// SLIDER
 
 		.kaarousel-slider{
 
@@ -43,7 +48,28 @@
 
 				white-space: normal;
 			}
+
+			&.slide-animation {}
+			&.fade-animation {
+				.kaarousel-slide {
+					position: absolute;
+					top: 0;
+					left: 0;
+					opacity: 0;
+					visibility: hidden;
+
+					transition: all .7s ease;
+
+					&.selected{
+						opacity: 1;
+						z-index: 10;
+						visibility: visible;
+					}
+				}
+			}
 		}
+
+		// NAV
 
 		.kaarousel-nav{
 
@@ -98,6 +124,8 @@
 			}
 
 		}
+
+		// PAGER
 
 		.kaarousel-pager{
 
