@@ -70,6 +70,50 @@ angular.module('myApp', [
       }
     ];
 
+    $scope.images = [
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/4'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/3'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/2'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/255/200/5'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/350/200/6'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/8'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/7'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/6'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/5'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/9'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/7'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/2'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/1'
+      },
+      {
+        url : 'http://lorempicsum.com/futurama/627/300/8'
+      },
+    ];
 
     $interval(function () {
       if ( !$scope.syncing ) {
@@ -85,9 +129,9 @@ angular.module('myApp', [
     $scope.autoplay = true;
     $scope.pauseOnHover = true;
 
-    $scope.shouldCenter = false;
+    $scope.shouldCenter = true;
     $scope.stopAfterAction = false;
-    $scope.timeInterval = 1000;
+    $scope.timeInterval = 2000;
 
     $scope.hideNav = false;
     $scope.hidePager = false;

@@ -193,10 +193,15 @@
               kaa-swipable="swipable"
               sync="sync"
               rtl="rtl"
-              data="data">
-          
-          <kaarousel-dummy ng-style="kaarouselMargin"></kaarousel-dummy>
-          <kaarousel-slide slide="slide" ng-style="itemStyles($index)" ng-repeat="slide in data | orderBy:'rank'" ng-class="{selected: checkIndex($index)}">
+              data="data"
+              animation="slide">
+
+          <kaarousel-slide 
+              slide="slide" 
+              ng-style="itemStyles($index)" 
+              ng-repeat="slide in data | orderBy:'rank' track by $index" 
+              ng-class="{selected: checkIndex($index), visible: isVisible($index)}">
+            <!-- Whaterver you want to put in the slide -->
             <ng-include src="'slide-tpl.html'"></ng-include>
           </kaarousel-slide>
 
@@ -206,7 +211,18 @@
 
         <p><a class="btn btn-lg btn-success" ng-href="#">Splendid!</a></p>
       </div>
-    
+
+      <div class="jumbotron text-center">
+        <kaarousel class="image-slider" displayed="1" animation="fade" per-slide="1" time-interval="3500" data="images">
+          <kaarousel-slide slide="image"
+            ng-repeat="image in images track by $index" 
+            ng-style="itemStyles($index)"
+            ng-class="{selected: checkIndex($index), visible: isVisible($index)}"> 
+            <img ng-src="{{image.url}}" >
+          </kaarousel-slide>
+        </kaarousel>
+      </div>
+      
       <hr>
     
       <div class="footer">
@@ -214,6 +230,7 @@
       </div>
     
     </div>
+
     
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
