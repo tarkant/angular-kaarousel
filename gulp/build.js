@@ -33,7 +33,7 @@ gulp.task('partials', function () {
       quotes: true
     }))
     .pipe($.ngHtml2js({
-      moduleName: 'angularKaarousel',
+      moduleName: 'angular-kaarousel',
       prefix: 'partials/'
     }))
     .pipe(gulp.dest('.tmp/partials'))
@@ -101,7 +101,7 @@ gulp.task('jsify', ['clean'], function () {
       quotes: true
     }))
     .pipe($.ngHtml2js({
-      moduleName: 'angularKaarousel',
+      moduleName: 'angular-kaarousel',
     }))
     .pipe(gulp.dest('app/src/template'))
     .pipe($.size());
@@ -120,7 +120,7 @@ gulp.task('doTheDistYall', ['jsify'], function () {
   return gulp.src('app/src/**/*.js')
     .pipe($.ngAnnotate())
     .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
-    .pipe($.concat('angularKaarousel.js'))
+    .pipe($.concat('angular-kaarousel.js'))
     .pipe(gulp.dest('dist'))
     .pipe($.size());
     

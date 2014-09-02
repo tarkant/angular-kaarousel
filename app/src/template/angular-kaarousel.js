@@ -1,8 +1,8 @@
 (function(module) {
 try {
-  module = angular.module('angularKaarousel');
+  module = angular.module('angular-kaarousel');
 } catch (e) {
-  module = angular.module('angularKaarousel', []);
+  module = angular.module('angular-kaarousel', []);
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('angular-kaarousel.html',
