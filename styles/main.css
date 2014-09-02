@@ -25,6 +25,9 @@
 .kaarousel .kaarousel-wrapper.dragging {
   cursor: move;
 }
+.kaarousel .kaarousel-wrapper.dragging a {
+  pointer-events: none;
+}
 .kaarousel .kaarousel-slider {
   white-space: nowrap;
   text-align: center;
@@ -37,6 +40,9 @@
   vertical-align: top;
   float: none;
   white-space: normal;
+}
+.kaarousel .kaarousel-slider .kaarousel-slide img {
+  pointer-events: none;
 }
 .kaarousel .kaarousel-slider.fade-animation .kaarousel-slide {
   position: absolute;
