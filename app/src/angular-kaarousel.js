@@ -350,8 +350,6 @@ angular.module('angular-kaarousel', [
 
         angular.element(element).addClass('kaarousel');
 
-        console.log(scope.$id);
-
         // Update on window resize
         angular.element($window).resize(function () {
           $timeout.cancel(windowTimeout);
