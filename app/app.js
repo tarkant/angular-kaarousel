@@ -150,8 +150,8 @@ angular.module('myApp', [
       loop : true, 
       animation : 'fade', 
       perSlide : 1,
-      timeInterval : 3500,
-      autoplay: false
+      timeInterval : 1500,
+      autoplay: true
     };
 
     // angular.forEach($scope.data, function(awesomeThing) {
