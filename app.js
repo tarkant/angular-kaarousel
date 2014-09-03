@@ -3,7 +3,7 @@
 angular.module('myApp', [
     'angular-kaarousel'
   ])
-  .controller('MainCtrl', function ($scope, $interval) {
+  .controller('MainCtrl', function ($scope, $interval, $timeout) {
     $scope.data = [
       {
         'key': 'angular',
@@ -129,7 +129,7 @@ angular.module('myApp', [
     $scope.autoplay = true;
     $scope.pauseOnHover = true;
 
-    $scope.shouldCenter = true;
+    $scope.shouldCenter = false;
     $scope.stopAfterAction = false;
     $scope.timeInterval = 2000;
 
@@ -150,10 +150,15 @@ angular.module('myApp', [
       loop : true, 
       animation : 'fade', 
       perSlide : 1,
-      timeInterval : 3500
+      timeInterval : 1500,
+      autoplay: true
     };
 
-    // angular.forEach($scope.data, function(awesomeThing) {
-    //   awesomeThing.rank = Math.random();
-    // });
+    $scope.afterSlide = function () {
+      $scope.onslide = 'I\'ve slidded ...';
+      $timeout(function () {
+        $scope.onslide = null;
+      }, $scope.timeInterval / 2);
+    }
+
   });

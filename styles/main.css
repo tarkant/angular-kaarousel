@@ -22,8 +22,14 @@
 .kaarousel .kaarousel-wrapper.shouldAnim .dummy {
   transition: all .7s ease;
 }
+.kaarousel .kaarousel-wrapper.shouldAnim .fade-animation > .kaarousel-slide {
+  transition: all .7s ease;
+}
 .kaarousel .kaarousel-wrapper.dragging {
   cursor: move;
+}
+.kaarousel .kaarousel-wrapper.dragging .dummy {
+  transition: none;
 }
 .kaarousel .kaarousel-wrapper.dragging a {
   pointer-events: none;
@@ -40,25 +46,28 @@
   vertical-align: top;
   float: none;
   white-space: normal;
+  text-align: left;
 }
 .kaarousel .kaarousel-slider .kaarousel-slide img {
   pointer-events: none;
 }
-.kaarousel .kaarousel-slider.fade-animation .kaarousel-slide {
+.kaarousel .kaarousel-slider.fade-animation > .kaarousel-slide {
   position: absolute;
   top: 0;
   left: 0;
   opacity: 0;
   visibility: hidden;
-  transition: all .7s ease;
 }
-.kaarousel .kaarousel-slider.fade-animation .kaarousel-slide.selected {
+.kaarousel .kaarousel-slider.fade-animation > .kaarousel-slide.selected {
   opacity: 1;
-  z-index: 10;
   visibility: visible;
 }
-.kaarousel .kaarousel-nav.kaarousel-prev,
-.kaarousel .kaarousel-nav.kaarousel-next {
+.kaarousel .kaarousel-nav {
+  transition: all .3s ease;
+  opacity: 1;
+}
+.kaarousel .kaarousel-nav .kaarousel-prev,
+.kaarousel .kaarousel-nav .kaarousel-next {
   position: absolute;
   top: 0;
   width: 10%;
@@ -66,8 +75,8 @@
   font-size: 0;
   transition: all .5s ease;
 }
-.kaarousel .kaarousel-nav.kaarousel-prev:after,
-.kaarousel .kaarousel-nav.kaarousel-next:after {
+.kaarousel .kaarousel-nav .kaarousel-prev:after,
+.kaarousel .kaarousel-nav .kaarousel-next:after {
   content: '>';
   position: absolute;
   top: 50%;
@@ -80,19 +89,19 @@
   font-weight: bold;
   color: #000;
 }
-.kaarousel .kaarousel-nav.kaarousel-prev:hover,
-.kaarousel .kaarousel-nav.kaarousel-next:hover {
+.kaarousel .kaarousel-nav .kaarousel-prev:hover,
+.kaarousel .kaarousel-nav .kaarousel-next:hover {
   cursor: pointer;
   background: #FFF;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
 }
-.kaarousel .kaarousel-nav.kaarousel-prev {
+.kaarousel .kaarousel-nav .kaarousel-prev {
   left: 0;
 }
-.kaarousel .kaarousel-nav.kaarousel-prev:after {
+.kaarousel .kaarousel-nav .kaarousel-prev:after {
   content: '<';
 }
-.kaarousel .kaarousel-nav.kaarousel-next {
+.kaarousel .kaarousel-nav .kaarousel-next {
   right: 0;
 }
 .kaarousel .kaarousel-pager {
@@ -100,6 +109,7 @@
   height: 20px;
   float: left;
   margin-bottom: 20px;
+  transition: all .5s ease;
 }
 .kaarousel .kaarousel-pager ul {
   padding: 0;
@@ -129,6 +139,9 @@
 }
 .kaarousel .kaarousel-pager ul li:hover {
   cursor: pointer;
+}
+.kaarousel .is-hidden {
+  opacity: 0;
 }
 body {
   font-family: 'Roboto', sans-serif;
@@ -184,6 +197,7 @@ form {
 }
 .image-slider .kaarousel-slide {
   padding: 0;
+  text-align: center !important;
 }
 .image-slider .kaarousel-slide > img {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
