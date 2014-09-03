@@ -358,6 +358,10 @@ angular.module('angular-kaarousel', [
           }
         };
 
+        this.shouldHideNav = function () {
+          return $scope.slides.length < 2;
+        };
+
       },
 
       link: function (scope, element, attrs, controller) {
@@ -587,6 +591,16 @@ angular.module('angular-kaarousel', [
       link: function(scope, element, attrs, controller) {
         // TODO add lazy loading on images
         controller.saveImage(attrs.ngSrc, scope.$index, element);
+      }
+    };
+  })
+
+  .directive('kaarouselNav', function(){
+    return {
+      require: '^kaarousel',
+      restrict: 'EA',
+      link: function(scope, element, attrs, controller) {
+        scope.shouldHideNav = controller.shouldHideNav();
       }
     };
   })
