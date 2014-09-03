@@ -536,12 +536,11 @@ angular.module('angular-kaarousel', [
       require: '^kaarousel',
       link: function (scope, element, attrs, controller) {
 
-        // Only way to have access to the main scope ...
-        // as far as i know
-        var parentScope = scope.kaarousel;
+        var parentScope = scope.kaarousel,
+            repeatRule = attrs.ngRepeat.split(' ')[0];
 
         // Register item
-        controller.addSlide(scope.slide, element);
+        controller.addSlide(scope[repeatRule], element);
 
         // Add class
         angular.element(element).addClass('kaarousel-slide');
