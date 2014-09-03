@@ -26,7 +26,7 @@
 				}
 				.fade-animation{
 					& > .kaarousel-slide {
-						transition: all .7s ease;						
+						transition: all .7s ease;
 					}
 				}
 			}
@@ -75,10 +75,8 @@
 					opacity: 0;
 					visibility: hidden;
 
-
 					&.selected{
 						opacity: 1;
-						z-index: 10;
 						visibility: visible;
 					}
 				}
@@ -89,8 +87,11 @@
 
 		.kaarousel-nav{
 
-			&.kaarousel-prev,
-			&.kaarousel-next{
+			transition: all .3s ease;
+			opacity: 1;
+
+			.kaarousel-prev,
+			.kaarousel-next{
 
 				position: absolute;
 				top: 0;
@@ -128,14 +129,14 @@
 				}
 			}
 
-			&.kaarousel-prev{
+			.kaarousel-prev{
 				left: 0;
 
 				&:after{
 					content: '<';
 				}
 			}
-			&.kaarousel-next{
+			.kaarousel-next{
 				right: 0;
 			}
 
@@ -149,6 +150,8 @@
 			height: 20px;
 			float: left;
 			margin-bottom: 20px;
+
+			transition: all .5s ease;
 
 			ul {
 				padding: 0;
@@ -189,5 +192,9 @@
 
 				}
 			}
+		}
+
+		.is-hidden{
+			opacity: 0;
 		}
 	}

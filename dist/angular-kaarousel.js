@@ -42,7 +42,8 @@ angular.module('angular-kaarousel', [
         data: '=',
         animation: '=',
         loop: '=',
-        options: '='
+        options: '=',
+        onSlide: '&'
       },
 
       controller: ["$scope", function ($scope) {
@@ -55,6 +56,7 @@ angular.module('angular-kaarousel', [
 
         // Current active index
         $scope.currentIndex = 0;
+        $scope.hasStarted = false;
         // Some variables for the swipe
         $scope.swipeThreshold = 120;
         $scope.swipeStageWidth = 200;
@@ -84,7 +86,12 @@ angular.module('angular-kaarousel', [
           sync: false,
           rtl: false,
           animation: 'slide',
-          loop: false
+          loop: false,
+          onSlide: null
+        };
+
+        self.getNbElements = function () {
+          return $scope.elements.length;
         };
         
         self.getConf = function () {
@@ -104,7 +111,8 @@ angular.module('angular-kaarousel', [
             sync: $scope.sync,
             rtl: $scope.rtl,
             animation: $scope.animation,
-            loop: $scope.loop
+            loop: $scope.loop,
+            onSlide: $scope.onSlide
           };
 
           for ( var c in conf ) {
@@ -120,7 +128,7 @@ angular.module('angular-kaarousel', [
 
         self.computeDisplayed = function () {
           var displayed = Math.abs(Math.ceil($scope.displayed)) || $scope.defaults.displayed;
-          return displayed > $scope.slides.length ? $scope.slides.length : displayed;
+          return displayed > self.getNbElements() ? self.getNbElements() : displayed;
         };
 
         self.computePerSlides = function () {
@@ -130,25 +138,28 @@ angular.module('angular-kaarousel', [
 
         conf = self.getConf();
 
-        self.addSlide = function ( item, jElem ) {
+        self.addSlide = function ( element, data ) {
           
-          $scope.slides.push(item);
-          $scope.elements.push(jElem);
+          $scope.elements.push(element);
+
+          if ( data ) {
+            $scope.slides.push(data);
+          }
 
           // Save sizes
           $scope.sizes.push({
-            width: angular.element(jElem).outerWidth(),
-            height: angular.element(jElem).outerHeight()
+            width: angular.element(element).outerWidth(),
+            height: angular.element(element).outerHeight()
           });
 
           // For RTL conf we should start on last slide
           if ( conf.rtl ) {
-            $scope.currentIndex = $scope.slides.length - 1;
+            $scope.currentIndex = self.getNbElements() - 1;
           }
         };
 
         self.computeIndex = function ( index ) {
-          var nbItems = $scope.slides.length;
+          var nbItems = self.getNbElements();
           if ( index >= nbItems ) { index = 0; }
           if ( index < 0 ) { index = nbItems - 1; }
           return index;
@@ -184,11 +195,16 @@ angular.module('angular-kaarousel', [
 
         self.goTo = function ( index ) {
 
-          var max = $scope.slides.length - conf.displayed;
+          var max = self.getNbElements() - conf.displayed;
 
           $timeout( function () {
+            $scope.hasStarted = true;
             $scope.currentIndex = index;
             $scope.sliderMargin = - self.getMargin( index, max );
+
+            if ( typeof conf.onSlide === 'function' ) {
+              conf.onSlide();
+            }
           });
 
           return index;
@@ -202,7 +218,7 @@ angular.module('angular-kaarousel', [
         };
 
         self.getMargin = function ( index, max ) {
-          var nbItems = $scope.slides.length, 
+          var nbItems = self.getNbElements(), 
               watchingUntil = self.getWatchUntil(index),
               margin = 0, j;
 
@@ -287,8 +303,6 @@ angular.module('angular-kaarousel', [
           
           // TODO if this is executed more that once it means that
           // there has been new datas added
-
-          self.goTo(self.getCurrentIndex());
           
           $scope.isReady = true;
           $scope.shouldAnim = true;
@@ -305,11 +319,9 @@ angular.module('angular-kaarousel', [
             self.setInterval( self.shouldStop() );
           }
           self.updateSizes();
-          self.goTo($scope.currentIndex);
-        };
-
-        self.getNbElements = function () {
-          return $scope.slides.length;
+          if ( $scope.hasStarted ) {
+            self.goTo($scope.currentIndex);            
+          }
         };
 
         self.saveImage = function ( path, index, element ) {
@@ -359,7 +371,7 @@ angular.module('angular-kaarousel', [
         };
 
         this.shouldHideNav = function () {
-          return $scope.slides.length < 2;
+          return self.getNbElements() < 2;
         };
 
       }],
@@ -367,7 +379,7 @@ angular.module('angular-kaarousel', [
       link: function (scope, element, attrs, controller) {
 
         var windowTimeout, watchTimeout, windowObj = angular.element($window),
-            watchers = '[autoplay, timeInterval, sync, displayed, perSlide, centerActive, stopAfterAction, pauseOnHover, rtl]';
+            watchers = '[autoplay, timeInterval, displayed, perSlide, centerActive, stopAfterAction, pauseOnHover, rtl]';
 
         angular.element(element).addClass('kaarousel');
 
@@ -391,7 +403,7 @@ angular.module('angular-kaarousel', [
 
             // If time interval or autoplay or sync as changed we should reset the timer
             // have to hard code the position of the values in the array though ...
-            for ( var i = 0; i < 3; i++ ) {
+            for ( var i = 0; i < 2; i++ ) {
               if ( newValues[i] !== oldValue[i] ) {
                 shouldResetInterval = true;
                 break;
@@ -404,13 +416,28 @@ angular.module('angular-kaarousel', [
         });
 
         // TODO Do that better
-        scope.$watch('sync', function () {
-          if ( !isNaN(scope.sync) ) {
-            scope.shouldAnim = true;
-            if ( !scope.pausedByUser ) {
-              controller.goTo(scope.sync);
-            }
+        scope.$watch('sync', function ( newValue, oldValue ) {
+
+          newValue = parseInt(newValue, 10);
+          oldValue = parseInt(oldValue, 10);
+
+          // Wow ?! we should sync ? Reset interval then !
+          if ( !isNaN(newValue) && isNaN(oldValue) ) {
+            controller.setInterval( true );
           }
+
+          if ( !isNaN(newValue) ) {
+            if ( !scope.shouldAnim ) {
+              scope.shouldAnim = true;              
+            }
+            controller.goTo(newValue);
+          }
+
+          // When no longer syncing, just restart basic behaviours
+          if ( isNaN(newValue) && !isNaN(oldValue) ) {
+            controller.updateKaarousel( true );
+          }
+
         });
       }
     };
@@ -536,11 +563,13 @@ angular.module('angular-kaarousel', [
       require: '^kaarousel',
       link: function (scope, element, attrs, controller) {
 
-        var parentScope = scope.kaarousel,
-            repeatRule = attrs.ngRepeat.split(' ')[0];
+        var parentScope = scope.kaarousel, repeatRule;
 
         // Register item
-        controller.addSlide(scope[repeatRule], element);
+        if ( attrs.ngRepeat ) {
+          repeatRule = attrs.ngRepeat.split(' ')[0];
+        }
+        controller.addSlide(element, repeatRule ? scope[repeatRule] : null);
 
         // Add class
         angular.element(element).addClass('kaarousel-slide');
@@ -566,7 +595,7 @@ angular.module('angular-kaarousel', [
         scope.isVisible = function () {
           var index = scope.$index,
               cu = parentScope.currentIndex,
-              max = parentScope.slides.length,
+              max = controller.getNbElements(),
               disp = controller.getConf().displayed;
 
           if ( parentScope.conf.centerActive && parentScope.isCentered ) {
@@ -631,6 +660,6 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('src/angular-kaarousel.html',
-    '<div class="kaarousel-actions-wrapper" ng-mouseenter="mouseEnterCallback()" ng-mouseleave="mouseLeaveCallback()"><kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}"><kaarousel-slider ng-transclude="" class="kaarousel-slider"></kaarousel-slider></kaarousel-wrapper><kaarousel-nav ng-class="{hidden: hideNav}"><kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev kaarousel-nav">PREV</kaarousel-prev><kaarousel-next ng-click="goNext()" ng-if="!shouldHideNav" class="kaarousel-next kaarousel-nav">NEXT</kaarousel-next></kaarousel-nav><kaarousel-pager class="kaarousel-pager" ng-class="{hidden: hidePager}"><ul><li ng-repeat="i in slides track by $index" ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li></ul></kaarousel-pager></div>');
+    '<div class="kaarousel-actions-wrapper" ng-mouseenter="mouseEnterCallback()" ng-mouseleave="mouseLeaveCallback()"><kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}"><kaarousel-slider ng-transclude="" class="kaarousel-slider"></kaarousel-slider></kaarousel-wrapper><kaarousel-nav class="kaarousel-nav" ng-class="{\'is-hidden\': hideNav}"><kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev><kaarousel-next ng-click="goNext()" ng-if="!shouldHideNav" class="kaarousel-next">NEXT</kaarousel-next></kaarousel-nav><kaarousel-pager class="kaarousel-pager" ng-class="{\'is-hidden\': hidePager}"><ul><li ng-repeat="i in slides track by $index" ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li></ul></kaarousel-pager></div>');
 }]);
 })();

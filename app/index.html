@@ -176,6 +176,7 @@
           </div>        
         </div>
 
+
         <!-- KAAROUSEL -->
         <kaarousel 
               displayed="displayed" 
@@ -194,6 +195,7 @@
               sync="sync"
               rtl="rtl"
               data="data"
+              on-slide="afterSlide()"
               animation="'slide'"><kaarousel-slide 
               slide="slide" 
               ng-style="itemStyles()"
@@ -204,6 +206,10 @@
           </kaarousel-slide></kaarousel>
         
         <!-- / KAAROUSEL -->
+        
+        <pre>
+          {{onslide}}
+        </pre>
 
         <p><a class="btn btn-lg btn-success" ng-href="#">Splendid!</a></p>
       </div>
