@@ -575,7 +575,7 @@ angular.module('angular-kaarousel', [
                    ( cu + 1 < disp && index < disp ) || 
                    ( cu > max - disp - 1 && index > max - disp - 1);
           } else {
-            return ( index >= cu && index <= cu + disp ) || 
+            return ( index >= cu && index < cu + disp ) || 
                    ( index > max - disp - 1 && cu > max - disp - 1 );
           }
         };

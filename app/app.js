@@ -129,7 +129,7 @@ angular.module('myApp', [
     $scope.autoplay = true;
     $scope.pauseOnHover = true;
 
-    $scope.shouldCenter = true;
+    $scope.shouldCenter = false;
     $scope.stopAfterAction = false;
     $scope.timeInterval = 2000;
 
@@ -150,7 +150,8 @@ angular.module('myApp', [
       loop : true, 
       animation : 'fade', 
       perSlide : 1,
-      timeInterval : 3500
+      timeInterval : 3500,
+      autoplay: false
     };
 
     // angular.forEach($scope.data, function(awesomeThing) {
