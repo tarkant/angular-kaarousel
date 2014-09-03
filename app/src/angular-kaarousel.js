@@ -367,6 +367,8 @@ angular.module('angular-kaarousel', [
 
         angular.element(element).addClass('kaarousel');
 
+        scope.$$nextSibling.kaarousel = scope;
+
         // Update on window resize
         scope.$watch(function () {
           return windowObj.width(); 
@@ -532,7 +534,7 @@ angular.module('angular-kaarousel', [
 
         // Only way to have access to the main scope ...
         // as far as i know
-        var parentScope = scope.$parent.$$prevSibling;
+        var parentScope = scope.kaarousel;
 
         // Register item
         controller.addSlide(scope.slide, element);
