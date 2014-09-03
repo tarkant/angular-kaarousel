@@ -599,7 +599,11 @@ angular.module('angular-kaarousel', [
       require: '^kaarousel',
       restrict: 'EA',
       link: function(scope, element, attrs, controller) {
-        scope.shouldHideNav = controller.shouldHideNav();
+        scope.$watch(function () {
+          return controller.getNbElements();
+        }, function () {
+          scope.shouldHideNav = controller.shouldHideNav();          
+        });
       }
     };
   })
