@@ -201,6 +201,10 @@ angular.module('angular-kaarousel', [
             $scope.hasStarted = true;
             $scope.currentIndex = index;
             $scope.sliderMargin = - self.getMargin( index, max );
+            
+            if ( conf.sync || conf.sync === 0 ) {
+              $scope.sync = $scope.currentIndex;
+            }
 
             if ( typeof conf.onSlide === 'function' ) {
               conf.onSlide();
