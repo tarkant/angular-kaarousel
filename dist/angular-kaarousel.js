@@ -53,6 +53,7 @@ angular.module('angular-kaarousel', [
         $scope.slides = [];
         $scope.elements = [];
         $scope.sizes = [];
+        $scope.isReady = false;
 
         // Current active index
         $scope.currentIndex = 0;
@@ -92,8 +93,27 @@ angular.module('angular-kaarousel', [
 
         self.getNbElements = function () {
           return $scope.elements.length;
+        };        
+
+        self.computeDisplayed = function () {
+          var displayed = Math.abs(Math.ceil($scope.displayed)) || $scope.defaults.displayed;
+          return displayed > self.getNbElements() ? self.getNbElements() : displayed;
         };
-        
+
+        self.computePerSlides = function () {
+          var perSlide = Math.abs(Math.ceil($scope.perSlide)) || $scope.defaults.perSlide;
+          
+          // TODO Maybe restrict perslide when fade or shuffle
+          // otherwise animation is a bit weird
+          // Uncomment if we should ...
+
+          /* if ( $scope.animation === 'fade' || $scope.animation === 'shuffle' ) {
+            perSlide = self.computeDisplayed();
+          } */
+
+          return $scope.rtl ? - perSlide : perSlide;
+        };
+
         self.getConf = function () {
           conf = {
             displayed : self.computeDisplayed(),
@@ -126,17 +146,7 @@ angular.module('angular-kaarousel', [
           return conf;
         };
 
-        self.computeDisplayed = function () {
-          var displayed = Math.abs(Math.ceil($scope.displayed)) || $scope.defaults.displayed;
-          return displayed > self.getNbElements() ? self.getNbElements() : displayed;
-        };
-
-        self.computePerSlides = function () {
-          var perSlide = Math.abs(Math.ceil($scope.perSlide)) || $scope.defaults.perSlide;
-          return $scope.rtl ? - perSlide : perSlide;
-        };
-
-        conf = self.getConf();
+        self.getConf();
 
         self.addSlide = function ( element, data ) {
           
@@ -280,7 +290,7 @@ angular.module('angular-kaarousel', [
         $scope.getStyles = function () {
           var styles = {};
           if ( $scope.currentIndex !== null ) {
-            if ( conf.animation !== 'fade' ) {
+            if ( conf.animation !== 'fade' && conf.animation !== 'shuffle' ) {
               styles = {
                 'margin-left': $scope.sliderMargin + 'px'
               };
@@ -303,6 +313,10 @@ angular.module('angular-kaarousel', [
           
           // TODO if this is executed more that once it means that
           // there has been new datas added
+
+          if ( $scope.isReady ) {
+            self.updateKaarousel();
+          }
           
           $scope.isReady = true;
           $scope.shouldAnim = true;
@@ -359,6 +373,9 @@ angular.module('angular-kaarousel', [
         };
 
         $scope.mouseLeaveCallback = function () {
+
+          $scope.wrapperElement.trigger('touchend');
+
           if ( !conf.stopAfterHover && conf.pauseOnHover ) { 
             $scope.resume();
           }
@@ -457,6 +474,10 @@ angular.module('angular-kaarousel', [
         
         var startCoords, lastCoords;
 
+        var hasEnough = function () {
+          return scope.conf.swipable && controller.getNbElements() > scope.conf.displayed;
+        };
+
         var shouldSwipe = function () {
           return startCoords && lastCoords && Math.abs( startCoords.x - lastCoords.x ) > scope.swipeThreshold;
         };
@@ -478,7 +499,7 @@ angular.module('angular-kaarousel', [
 
         scope.swipeHandler = $swipe.bind(element, {
           start: function ( coords ) {
-            if ( !scope.conf.swipable ) { return; }
+            if ( !hasEnough() ) { return; }
             $timeout(function () {
               startCoords = coords;
               lastCoords = null;
@@ -487,16 +508,15 @@ angular.module('angular-kaarousel', [
             });
           },
           move: function ( coords ) {
-            if ( !scope.conf.swipable ) { return; }
+            if ( !hasEnough() ) { return; }
             $timeout(function () {
               lastCoords = coords;
               scope.addSwipeOffset();
             });
           },
-          end: function ( coords ) {
-            if ( !scope.conf.swipable ) { return; }
+          end: function () {
+            if ( !hasEnough() ) { return; }
             $timeout(function () {
-              lastCoords = coords;
               var displacement = startCoords.x - lastCoords.x;
               if ( shouldSwipe() ) {
                 if ( displacement > 0 ) {
@@ -512,8 +532,12 @@ angular.module('angular-kaarousel', [
             });
           },
           cancel: function () {
-            if ( !scope.conf.swipable ) { return; }
-            scope.resetSwipe();
+            if ( !hasEnough() ) { return; }
+            $timeout(function () {
+              scope.shouldAnim = true;
+              scope.dragging = false;
+              scope.resetSwipe();              
+            });
           }
         });
       }    
@@ -580,10 +604,23 @@ angular.module('angular-kaarousel', [
         }
 
         scope.itemStyles = function () {
-          // It's wayyyyyyy fatser to call the controller here for some reason
-          return {
-            'width' : (100 / controller.getConf().displayed ) + '%'
+
+          var conf = controller.getConf(),
+              modulo = scope.$index % conf.displayed,
+              itemWidth = 100 / conf.displayed;
+
+          var styles = {
+            'width' : (100 / conf.displayed ) + '%'
           };
+
+          if ( conf.animation === 'shuffle' ) {
+            styles.left = Math.abs( modulo ) * ( itemWidth ) + ( scope.isVisible() ? 0 : 100 ) + '%';
+          }
+          if ( conf.animation === 'fade' ) {
+            styles.left = modulo * itemWidth + '%';
+          }
+          return styles;
+
         };
 
         scope.isActive = function () {
