@@ -74,7 +74,7 @@ angular.module('myApp', [
       {
         url : 'http://lorempicsum.com/futurama/627/300/4'
       },
-      {
+      /*{
         url : 'http://lorempicsum.com/futurama/627/300/3'
       },
       {
@@ -112,7 +112,7 @@ angular.module('myApp', [
       },
       {
         url : 'http://lorempicsum.com/futurama/627/300/8'
-      },
+      },*/
     ];
 
     $interval(function () {
@@ -148,7 +148,7 @@ angular.module('myApp', [
     $scope.optionsII = {
       displayed : 1, 
       loop : true, 
-      animation : 'fade', 
+      animation : 'shuffle', 
       perSlide : 1,
       timeInterval : 1500,
       autoplay: true
@@ -158,7 +158,7 @@ angular.module('myApp', [
       $scope.onslide = 'I\'ve slidded ...';
       $timeout(function () {
         $scope.onslide = null;
-      }, $scope.timeInterval / 2);
+      }, $scope.timeInterval / 3);
     }
 
   });
