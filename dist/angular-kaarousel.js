@@ -507,19 +507,19 @@ angular.module('angular-kaarousel', [
             $timeout(function () {
               startCoords = coords;
               lastCoords = null;
-              scope.shouldAnim = false;
-              scope.dragging = true;
             });
           },
           move: function ( coords ) {
             if ( !hasEnough() ) { return; }
             $timeout(function () {
               lastCoords = coords;
+              scope.shouldAnim = false;
+              scope.dragging = true;
               scope.addSwipeOffset();
             });
           },
           end: function () {
-            if ( !hasEnough() ) { return; }
+            if ( !hasEnough() || !lastCoords ) { return; }
             $timeout(function () {
               var displacement = startCoords.x - lastCoords.x;
               if ( shouldSwipe() ) {
