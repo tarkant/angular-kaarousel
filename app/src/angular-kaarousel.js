@@ -395,6 +395,10 @@ angular.module('angular-kaarousel', [
           return self.getNbElements() < 2;
         };
 
+        $scope.$on('$destroy', function () {
+          self.setInterval(true);
+        });
+
       },
 
       link: function (scope, element, attrs, controller) {
