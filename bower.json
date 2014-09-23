@@ -15,5 +15,13 @@
     "angular-mocks": "1.2.x",
     "bootstrap": "3.2.x",
     "angular-ui-bootstrap": "~0.11.0"
-  }
+  },
+  "ignore": [
+    "*",
+    "**/.*",
+    "!/dist/**",
+    "!/bower.json",
+    "!/LICENSE",
+    "!/README.md"
+  ]
 }
