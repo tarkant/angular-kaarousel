@@ -20,7 +20,7 @@
 				vertical-align: top;
 			}
 
-			&.shouldAnim{
+			&.shouldAnim {
 				.dummy {
 					transition: all .7s ease;
 				}
@@ -76,11 +76,13 @@
 					left: 0;
 					opacity: 0;
 					visibility: hidden;
+					z-index: 0;
 
 					&.selected,
 					&.visible{
 						opacity: 1;
 						visibility: visible;
+						z-index: 10;
 					}
 				}
 			}
