@@ -50,6 +50,8 @@ angular.module('angular-kaarousel', [
 
         var self = this, conf;
 
+        $scope.kaarousel = $scope;
+
         $scope.slides = [];
         $scope.elements = [];
         $scope.sizes = [];
@@ -89,6 +91,10 @@ angular.module('angular-kaarousel', [
           animation: 'slide',
           loop: false,
           onSlide: null
+        };
+
+        self.getScope = function () {
+          return $scope.kaarousel;
         };
 
         self.getNbElements = function () {
@@ -408,8 +414,6 @@ angular.module('angular-kaarousel', [
 
         angular.element(element).addClass('kaarousel');
 
-        scope.$$nextSibling.kaarousel = scope;
-
         // Update on window resize
         scope.$watch(function () {
           return windowObj.width(); 
@@ -570,6 +574,7 @@ angular.module('angular-kaarousel', [
         
         // REGISTER ELEMENT
         scope.sliderElement = element;
+        scope.kaarousel = scope;
 
         // ADD CLASSES
         slider.addClass(scope.conf.animation + '-animation');
@@ -595,7 +600,7 @@ angular.module('angular-kaarousel', [
       require: '^kaarousel',
       link: function (scope, element, attrs, controller) {
 
-        var parentScope = scope.kaarousel, repeatRule;
+        var parentScope = controller.getScope(), repeatRule;
 
         // Register item
         if ( attrs.ngRepeat ) {

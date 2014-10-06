@@ -50,6 +50,8 @@ angular.module('angular-kaarousel', [
 
         var self = this, conf;
 
+        $scope.kaarousel = $scope;
+
         $scope.slides = [];
         $scope.elements = [];
         $scope.sizes = [];
@@ -89,6 +91,10 @@ angular.module('angular-kaarousel', [
           animation: 'slide',
           loop: false,
           onSlide: null
+        };
+
+        self.getScope = function () {
+          return $scope.kaarousel;
         };
 
         self.getNbElements = function () {
@@ -408,8 +414,6 @@ angular.module('angular-kaarousel', [
 
         angular.element(element).addClass('kaarousel');
 
-        scope.$$nextSibling.kaarousel = scope;
-
         // Update on window resize
         scope.$watch(function () {
           return windowObj.width(); 
@@ -570,6 +574,7 @@ angular.module('angular-kaarousel', [
         
         // REGISTER ELEMENT
         scope.sliderElement = element;
+        scope.kaarousel = scope;
 
         // ADD CLASSES
         slider.addClass(scope.conf.animation + '-animation');
@@ -595,7 +600,7 @@ angular.module('angular-kaarousel', [
       require: '^kaarousel',
       link: function (scope, element, attrs, controller) {
 
-        var parentScope = scope.kaarousel, repeatRule;
+        var parentScope = controller.getScope(), repeatRule;
 
         // Register item
         if ( attrs.ngRepeat ) {
@@ -705,6 +710,6 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('src/angular-kaarousel.html',
-    '<div class="kaarousel-actions-wrapper" ng-mouseenter="mouseEnterCallback()" ng-mouseleave="mouseLeaveCallback()"><kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}"><kaarousel-slider ng-transclude="" class="kaarousel-slider"></kaarousel-slider></kaarousel-wrapper><kaarousel-nav class="kaarousel-nav" ng-class="{\'is-hidden\': hideNav}"><kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev><kaarousel-next ng-click="goNext()" ng-if="!shouldHideNav" class="kaarousel-next">NEXT</kaarousel-next></kaarousel-nav><kaarousel-pager class="kaarousel-pager" ng-class="{\'is-hidden\': hidePager}"><ul><li ng-repeat="i in slides track by $index" ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li></ul></kaarousel-pager></div>');
+    '<div class="kaarousel-actions-wrapper" ng-if="autoplay" ng-mouseenter="mouseEnterCallback()" ng-mouseleave="mouseLeaveCallback()"><kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}"><kaarousel-slider ng-transclude="" class="kaarousel-slider"></kaarousel-slider></kaarousel-wrapper><kaarousel-nav class="kaarousel-nav" ng-class="{\'is-hidden\': hideNav}"><kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev><kaarousel-next ng-click="goNext()" ng-if="!shouldHideNav" class="kaarousel-next">NEXT</kaarousel-next></kaarousel-nav><kaarousel-pager class="kaarousel-pager" ng-class="{\'is-hidden\': hidePager}"><ul><li ng-repeat="i in slides track by $index" ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li></ul></kaarousel-pager></div><div class="kaarousel-actions-wrapper" ng-if="!autoplay"><kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}"><kaarousel-slider ng-transclude="" class="kaarousel-slider"></kaarousel-slider></kaarousel-wrapper><kaarousel-nav class="kaarousel-nav" ng-class="{\'is-hidden\': hideNav}"><kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev><kaarousel-next ng-click="goNext()" ng-if="!shouldHideNav" class="kaarousel-next">NEXT</kaarousel-next></kaarousel-nav><kaarousel-pager class="kaarousel-pager" ng-class="{\'is-hidden\': hidePager}"><ul><li ng-repeat="i in slides track by $index" ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li></ul></kaarousel-pager></div>');
 }]);
 })();
