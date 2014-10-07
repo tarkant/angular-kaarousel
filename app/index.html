@@ -25,19 +25,19 @@
     <![endif]-->
 
     <div class="container" ng-controller="MainCtrl">
-    
+
       <nav class="navbar navbar-static-top navbar-inverse">
         <div class="navbar-header">
           <a class="navbar-brand" href="#">Gulp Angular</a>
         </div>
-    
+
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
           <ul class="nav navbar-nav">
             <li class="active"><a ng-href="#">Home</a></li>
           </ul>
         </div>
       </nav>
-    
+
       <div class="jumbotron text-center">
         <h1>angularKaarousel</h1>
         <p class="lead">
@@ -106,7 +106,7 @@
                   </span>
                   <input type="text" ng-model="hideNav" class="form-control">
                 </div>
-              </div>              
+              </div>
               <div class="form-group col-xs-6">
                 <label>Show nav on hover</label>
                 <div class="input-group">
@@ -115,7 +115,7 @@
                   </span>
                   <input type="text" ng-model="navOnHover" class="form-control">
                 </div>
-              </div>              
+              </div>
               <div class="form-group col-xs-6">
                 <label>Hide pager</label>
                 <div class="input-group">
@@ -124,7 +124,7 @@
                   </span>
                   <input type="text" ng-model="hidePager" class="form-control">
                 </div>
-              </div>              
+              </div>
               <div class="form-group col-xs-6">
                 <label>Show pager on hover</label>
                 <div class="input-group">
@@ -133,7 +133,7 @@
                   </span>
                   <input type="text" ng-model="pagerOnHover" class="form-control">
                 </div>
-              </div>            
+              </div>
             </div>
             <div class="tab-pane" id="advanced-tab">
               <div class="form-group col-xs-4">
@@ -144,7 +144,7 @@
                   </span>
                   <input type="text" ng-model="shouldCenter" class="form-control">
                 </div>
-              </div>              
+              </div>
               <div class="form-group col-xs-4">
                 <label>Should stop after user action</label>
                 <div class="input-group">
@@ -173,18 +173,21 @@
                 </div>
               </div> -->
             </div>
-          </div>        
+          </div>
         </div>
 
+        <pre>
+          {{minWidth}}
+        </pre>
 
         <!-- KAAROUSEL -->
-        <kaarousel 
-              displayed="displayed" 
-              per-slide="perSlide" 
-              autoplay="autoplay" 
-              pause-on-hover="pauseOnHover" 
-              stop-after-action="stopAfterAction" 
-              time-interval="timeInterval" 
+        <kaarousel
+              displayed="displayed"
+              per-slide="perSlide"
+              autoplay="autoplay"
+              pause-on-hover="pauseOnHover"
+              stop-after-action="stopAfterAction"
+              time-interval="timeInterval"
               center-active="shouldCenter"
               update-rate="updateRate"
               hide-nav="hideNav"
@@ -194,18 +197,19 @@
               kaa-swipable="swipable"
               sync="sync"
               data="data"
+              min-width="minWidth"
               on-slide="afterSlide()"
-              animation="'slide'"><kaarousel-slide 
-              slide="slide" 
+              animation="'slide'"><kaarousel-slide
+              slide="slide"
               ng-style="itemStyles()"
-              ng-repeat="slide in data | orderBy:'rank' track by $index" 
+              ng-repeat="slide in data | orderBy:'rank' track by $index"
               ng-class="{selected: isActive(), visible: isVisible()}">
             <!-- Whaterver you want to put in the slide -->
             <ng-include src="'slide-tpl.html'"></ng-include>
           </kaarousel-slide></kaarousel>
-        
+
         <!-- / KAAROUSEL -->
-        
+
         <pre>
           {{onslide}}
         </pre>
@@ -213,26 +217,26 @@
         <p><a class="btn btn-lg btn-success" ng-href="#">Splendid!</a></p>
       </div>
 
-      <div class="jumbotron text-center">
-        <kaarousel class="image-slider" 
-          options="optionsII" 
+      <!-- <div class="jumbotron text-center">
+        <kaarousel class="image-slider"
+          options="optionsII"
           data="images"><kaarousel-slide slide="image"
-            ng-repeat="image in images track by $index" 
+            ng-repeat="image in images track by $index"
             ng-style="itemStyles()"
-            ng-class="{selected: isActive(), visible: isVisible()}"> 
+            ng-class="{selected: isActive(), visible: isVisible()}">
             <img ng-src="{{image.url}}" kaarousel-image>
           </kaarousel-slide></kaarousel>
-      </div>
-      
+      </div> -->
+
       <hr>
-    
+
       <div class="footer">
         <p>With ♥ from <a href="https://twitter.com/Swiip">@Swiip</a></p>
       </div>
-    
+
     </div>
 
-    
+
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>

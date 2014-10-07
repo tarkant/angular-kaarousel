@@ -1,14 +1,14 @@
 <!-- KAAROUSEL MAIN WRAPPER -->
-<div class="kaarousel-actions-wrapper" ng-if="autoplay" ng-mouseenter="mouseEnterCallback()" ng-mouseleave="mouseLeaveCallback()">
-	
+<kaarousel-container class="kaarousel-actions-wrapper" ng-if="autoplay" ng-mouseenter="mouseEnterCallback()" ng-mouseleave="mouseLeaveCallback()">
+
 	<!-- SLIDER WRAPPER -->
 	<kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}">
-		
+
 		<!-- SLIDING PART -->
 		<kaarousel-slider ng-transclude class="kaarousel-slider"></kaarousel-slider>
-	
+
 	</kaarousel-wrapper>
-	
+
 	<!-- PREV / NEXT NAV -->
 	<kaarousel-nav class="kaarousel-nav" ng-class="{'is-hidden': hideNav}">
 		<kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev>
@@ -21,20 +21,20 @@
 			<li ng-repeat="i in slides track by $index"  ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
 		</ul>
 	</kaarousel-pager>
-	
-</div>
+
+</kaarousel-container>
 
 <!-- KAAROUSEL MAIN WRAPPER -->
-<div class="kaarousel-actions-wrapper" ng-if="!autoplay">
-	
+<kaarousel-container class="kaarousel-actions-wrapper" ng-if="!autoplay">
+
 	<!-- SLIDER WRAPPER -->
 	<kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}">
-		
+
 		<!-- SLIDING PART -->
 		<kaarousel-slider ng-transclude class="kaarousel-slider"></kaarousel-slider>
-	
+
 	</kaarousel-wrapper>
-	
+
 	<!-- PREV / NEXT NAV -->
 	<kaarousel-nav class="kaarousel-nav" ng-class="{'is-hidden': hideNav}">
 		<kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev>
@@ -44,8 +44,8 @@
 	<!-- PAGER -->
 	<kaarousel-pager class="kaarousel-pager" ng-class="{'is-hidden': hidePager}">
 		<ul>
-			<li ng-repeat="i in slides track by $index"  ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
+			<li ng-repeat="item in slides track by $index"  ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
 		</ul>
 	</kaarousel-pager>
-	
-</div>
+
+</kaarousel-container>

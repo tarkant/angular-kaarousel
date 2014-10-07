@@ -53,20 +53,6 @@ angular.module('myApp', [
         'url': 'http://jquery.com/',
         'description': 'jQuery is a fast, small, and feature-rich JavaScript library.',
         'logo': 'jquery.jpg'
-      },
-      {
-        'key': 'bootstrap',
-        'title': 'Bootstrap',
-        'url': 'http://getbootstrap.com/',
-        'description': 'Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile first projects on the web.',
-        'logo': 'bootstrap.png'
-      },
-      {
-        'key': 'less',
-        'title': 'Less',
-        'url': 'http://lesscss.org/',
-        'description': 'Less extends the CSS language, adding features that allow variables, mixins, functions and many other techniques.',
-        'logo': 'less.png'
       }
     ];
 
@@ -118,20 +104,22 @@ angular.module('myApp', [
     $interval(function () {
       if ( !$scope.syncing ) {
         $scope.sync = null;
-        return;  
+        return;
       }
       $scope.sync++;
-      $scope.sync = $scope.sync > $scope.data.length - 1 ? 0 : $scope.sync; 
+      $scope.sync = $scope.sync > $scope.data.length - 1 ? 0 : $scope.sync;
     }, 3000);
 
-    $scope.displayed = 3;
-    $scope.perSlide = 1;
-    $scope.autoplay = true;
+    $scope.displayed = 5;
+    $scope.perSlide = 5;
+    $scope.autoplay = false;
     $scope.pauseOnHover = true;
 
     $scope.shouldCenter = false;
     $scope.stopAfterAction = false;
     $scope.timeInterval = 2000;
+
+    $scope.minWidth = 250;
 
     $scope.hideNav = false;
     $scope.hidePager = false;
@@ -146,9 +134,9 @@ angular.module('myApp', [
     $scope.updateRate = 300;
 
     $scope.optionsII = {
-      displayed : 1, 
-      loop : true, 
-      animation : 'shuffle', 
+      displayed : 1,
+      loop : true,
+      animation : 'shuffle',
       perSlide : 1,
       timeInterval : 1500,
       autoplay: false
