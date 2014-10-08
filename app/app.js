@@ -119,7 +119,7 @@ angular.module('myApp', [
     $scope.stopAfterAction = false;
     $scope.timeInterval = 2000;
 
-    $scope.minWidth = 250;
+    // $scope.minWidth = 250;
 
     $scope.hideNav = false;
     $scope.hidePager = false;

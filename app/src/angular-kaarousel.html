@@ -42,7 +42,7 @@
 	</kaarousel-nav>
 
 	<!-- PAGER -->
-	<kaarousel-pager class="kaarousel-pager" ng-class="{'is-hidden': hidePager}">
+	<kaarousel-pager class="kaarousel-pager" ng-class="{'is-hidden': hidePager}" ng-if="!shouldHideNav">
 		<ul>
 			<li ng-repeat="item in slides track by $index"  ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
 		</ul>

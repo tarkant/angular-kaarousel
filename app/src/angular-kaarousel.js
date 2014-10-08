@@ -421,7 +421,8 @@ angular.module('angular-kaarousel', [
         };
 
         this.shouldHideNav = function () {
-          return self.getNbElements() < 2;
+          self.getConf();
+          return self.getNbElements() <= conf.displayed;
         };
 
         $scope.$on('$destroy', function () {
@@ -715,11 +716,17 @@ angular.module('angular-kaarousel', [
       require: '^kaarousel',
       restrict: 'EA',
       link: function(scope, element, attrs, controller) {
+
         scope.$watch(function () {
           return controller.getNbElements();
         }, function () {
           scope.shouldHideNav = controller.shouldHideNav();
         });
+
+        scope.$watch('displayed', function () {
+          scope.shouldHideNav = controller.shouldHideNav();
+        });
+
       }
     };
   })
