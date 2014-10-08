@@ -33,27 +33,27 @@ angular.module('myApp', [
         'description': 'Behavior-Driven JavaScript.',
         'logo': 'jasmine.png'
       },
-      {
-        'key': 'karma',
-        'title': 'Karma',
-        'url': 'http://karma-runner.github.io/',
-        'description': 'Spectacular Test Runner for JavaScript.',
-        'logo': 'karma.png'
-      },
-      {
-        'key': 'protractor',
-        'title': 'Protractor',
-        'url': 'https://github.com/angular/protractor',
-        'description': 'End to end test framework for AngularJS applications built on top of WebDriverJS.',
-        'logo': 'protractor.png'
-      },
-      {
-        'key': 'jquery',
-        'title': 'jQuery',
-        'url': 'http://jquery.com/',
-        'description': 'jQuery is a fast, small, and feature-rich JavaScript library.',
-        'logo': 'jquery.jpg'
-      }
+      // {
+      //   'key': 'karma',
+      //   'title': 'Karma',
+      //   'url': 'http://karma-runner.github.io/',
+      //   'description': 'Spectacular Test Runner for JavaScript.',
+      //   'logo': 'karma.png'
+      // },
+      // {
+      //   'key': 'protractor',
+      //   'title': 'Protractor',
+      //   'url': 'https://github.com/angular/protractor',
+      //   'description': 'End to end test framework for AngularJS applications built on top of WebDriverJS.',
+      //   'logo': 'protractor.png'
+      // },
+      // {
+      //   'key': 'jquery',
+      //   'title': 'jQuery',
+      //   'url': 'http://jquery.com/',
+      //   'description': 'jQuery is a fast, small, and feature-rich JavaScript library.',
+      //   'logo': 'jquery.jpg'
+      // }
     ];
 
     $scope.images = [
@@ -119,7 +119,7 @@ angular.module('myApp', [
     $scope.stopAfterAction = false;
     $scope.timeInterval = 2000;
 
-    // $scope.minWidth = 250;
+    $scope.minWidth = 250;
 
     $scope.hideNav = false;
     $scope.hidePager = false;

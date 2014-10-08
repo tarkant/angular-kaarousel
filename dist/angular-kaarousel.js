@@ -106,6 +106,7 @@ angular.module('angular-kaarousel', [
         self.computeDisplayed = function () {
           var minWidth = parseInt( $scope.minWidth, 10 ),
               confDisplayed = Math.abs(Math.ceil($scope.displayed)) || $scope.defaults.displayed,
+              nbElements = self.getNbElements(),
               displayed;
 
           if ( minWidth && $scope.sliderElement ) {
@@ -116,7 +117,14 @@ angular.module('angular-kaarousel', [
             displayed = confDisplayed;
           }
 
-          return displayed > self.getNbElements() ? self.getNbElements() : displayed;
+          if ( nbElements > displayed && displayed > confDisplayed ) {
+            return confDisplayed;
+          }
+          if ( displayed === confDisplayed && nbElements < displayed ) {
+            return nbElements;
+          }
+          return displayed;
+
         };
 
         self.computePerSlides = function () {
