@@ -44,7 +44,8 @@ angular.module('angular-kaarousel', [
         loop: '=',
         options: '=',
         onSlide: '&',
-        minWidth: '='
+        minWidth: '=',
+        expand: '='
       },
 
       controller: function ($scope) {
@@ -92,7 +93,8 @@ angular.module('angular-kaarousel', [
           animation: 'slide',
           loop: false,
           onSlide: null,
-          minWidth: null
+          minWidth: null,
+          expand: null
         };
 
         self.getScope = function () {
@@ -120,7 +122,7 @@ angular.module('angular-kaarousel', [
           if ( nbElements > displayed && displayed > confDisplayed ) {
             return confDisplayed;
           }
-          if ( displayed === confDisplayed && nbElements < displayed ) {
+          if ( displayed === confDisplayed && nbElements < displayed && $scope.expand ) {
             return nbElements;
           }
           return displayed;
@@ -156,7 +158,8 @@ angular.module('angular-kaarousel', [
             animation: $scope.animation,
             loop: $scope.loop,
             onSlide: $scope.onSlide,
-            minWidth: $scope.minWidth
+            minWidth: $scope.minWidth,
+            expand: $scope.expand
           };
 
           for ( var c in conf ) {
