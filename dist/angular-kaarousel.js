@@ -317,7 +317,7 @@ angular.module('angular-kaarousel', [
           $scope.elements = [];
           $scope.slides = [];
           $scope.isReady = false;
-        }
+        };
 
         // TODO do that better
         $scope.getStyles = function () {
@@ -381,6 +381,11 @@ angular.module('angular-kaarousel', [
             $scope.loadedImage++;
             self.updateSizes();
           });
+        };
+
+        self.updateElements = function ( element ) {
+          $scope.elements.splice($scope.elements.indexOf(element), 1);
+          self.updateKaarousel();
         };
 
         $scope.pause = function () {
@@ -500,7 +505,7 @@ angular.module('angular-kaarousel', [
     return {
       restrict: 'EA',
       require: '^kaarousel',
-      link: function (scope, element, attrs) {}
+      link: function () {}
     };
   })
 
@@ -653,6 +658,10 @@ angular.module('angular-kaarousel', [
         if ( scope.$last ) {
           controller.lastItem();
         }
+
+        scope.$on('$destroy', function () {
+          controller.updateElements(element);
+        });
 
         scope.itemStyles = function () {
 
