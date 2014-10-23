@@ -324,12 +324,6 @@ angular.module('angular-kaarousel', [
           }
         };
 
-        self.reInit = function () {
-          $scope.elements = [];
-          $scope.slides = [];
-          $scope.isReady = false;
-        };
-
         // TODO do that better
         $scope.getStyles = function () {
           var styles = {};
@@ -651,10 +645,6 @@ angular.module('angular-kaarousel', [
 
         var parentScope = controller.getScope(), repeatRule;
 
-        if ( parentScope.isReady ) {
-          controller.reInit();
-        }
-
         // Register item
         if ( attrs.ngRepeat ) {
           repeatRule = attrs.ngRepeat.split(' ')[0];
@@ -667,6 +657,7 @@ angular.module('angular-kaarousel', [
 
         // Last element launch the kaarousel
         if ( scope.$last ) {
+          console.log('test');
           controller.lastItem();
         }
 
