@@ -657,7 +657,6 @@ angular.module('angular-kaarousel', [
 
         // Last element launch the kaarousel
         if ( scope.$last ) {
-          console.log('test');
           controller.lastItem();
         }
 
