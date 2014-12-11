@@ -215,7 +215,7 @@ angular.module('angular-kaarousel', [
             $scope.userAction = true;
           }
           self.setInterval(self.shouldStop());
-          return self.goTo(self.computeIndex(index));
+          return self.goTo(self.computeIndex(index), false);
         };
 
         $scope.goNext = function ( userAction, strength ) {
@@ -224,7 +224,7 @@ angular.module('angular-kaarousel', [
             $scope.userAction = true;
           }
           self.setInterval(self.shouldStop());
-          return self.goTo(self.computeIndex(index));
+          return self.goTo(self.computeIndex(index), false);
         };
 
         self.shouldStop = function () {
@@ -250,7 +250,7 @@ angular.module('angular-kaarousel', [
               $scope.sync = $scope.currentIndex;
             }
 
-            if ( preventCallback && typeof conf.onSlide === 'function' ) {
+            if ( !preventCallback && typeof conf.onSlide === 'function' ) {
               conf.onSlide();
             }
           });
@@ -493,7 +493,7 @@ angular.module('angular-kaarousel', [
             if ( !scope.shouldAnim ) {
               scope.shouldAnim = true;
             }
-            controller.goTo(newValue);
+            controller.goTo(newValue, false);
           }
 
           // When no longer syncing, just restart basic behaviours
@@ -536,7 +536,6 @@ angular.module('angular-kaarousel', [
           return startCoords && lastCoords && Math.abs( startCoords.x - lastCoords.x ) > scope.swipeThreshold;
         };
 
-        // Computing a strenght here but not using the valu anymore
         var getStrength = function () {
           return Math.floor( Math.abs( startCoords.x - lastCoords.x ) / scope.swipeStageWidth ) + 1;
         };
@@ -548,7 +547,7 @@ angular.module('angular-kaarousel', [
           controller.move(offset);
         };
         scope.resetSwipe = function () {
-          controller.goTo(scope.currentIndex);
+          controller.goTo(scope.currentIndex, true);
         };
 
         scope.swipeHandler = $swipe.bind(element, {
@@ -751,7 +750,7 @@ angular.module('angular-kaarousel', [
             scope.userAction = true;
           }
           controller.setInterval( controller.shouldStop() );
-          controller.goTo( index );
+          controller.goTo( index, false );
         };
       }
     };
