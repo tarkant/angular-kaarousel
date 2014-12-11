@@ -237,7 +237,7 @@ angular.module('angular-kaarousel', [
           return true;
         };
 
-        self.goTo = function ( index ) {
+        self.goTo = function ( index, preventCallback ) {
 
           var max = self.getNbElements() - conf.displayed;
 
@@ -250,7 +250,7 @@ angular.module('angular-kaarousel', [
               $scope.sync = $scope.currentIndex;
             }
 
-            if ( typeof conf.onSlide === 'function' ) {
+            if ( preventCallback && typeof conf.onSlide === 'function' ) {
               conf.onSlide();
             }
           });
@@ -372,7 +372,7 @@ angular.module('angular-kaarousel', [
           }
           self.updateSizes();
           if ( $scope.hasStarted ) {
-            self.goTo($scope.currentIndex);
+            self.goTo($scope.currentIndex, true);
           }
         };
 
