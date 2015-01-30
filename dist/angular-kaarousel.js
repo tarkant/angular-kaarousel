@@ -726,6 +726,10 @@ angular.module('angular-kaarousel', [
       restrict: 'EA',
       link: function(scope, element, attrs, controller) {
 
+        if ( !scope.hideNav && scope.options ) {
+          scope.hideNav = scope.options.hideNav !== undefined ? scope.options.hideNav : false;
+        }
+
         scope.$watch(function () {
           return controller.getNbElements();
         }, function () {
@@ -745,6 +749,11 @@ angular.module('angular-kaarousel', [
       restrict: 'EA',
       require: '^kaarousel',
       link: function (scope, element, attrs, controller) {
+
+        if ( !scope.hidePager && scope.options ) {
+          scope.hidePager = scope.options.hidePager !== undefined ? scope.options.hidePager : false;
+        }
+
         scope.goTo = function ( index ) {
           if(scope.stopAfterAction){
             scope.userAction = true;
