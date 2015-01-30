@@ -97,16 +97,6 @@ angular.module('angular-kaarousel', [
           expand: null
         };
 
-        console.log($scope.options);
-
-        // if ( $scope.options && !$scope.hidePager ) {
-        //   $scope.hidePager = $scope.options.hidePager;
-        // }
-
-        // if ( $scope.options && !$scope.hideNav ) {
-        //   $scope.hideNav = $scope.options.hideNav;
-        // }
-
         self.getScope = function () {
           return $scope.kaarousel;
         };
