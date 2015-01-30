@@ -33,27 +33,27 @@ angular.module('myApp', [
         'description': 'Behavior-Driven JavaScript.',
         'logo': 'jasmine.png'
       },
-      // {
-      //   'key': 'karma',
-      //   'title': 'Karma',
-      //   'url': 'http://karma-runner.github.io/',
-      //   'description': 'Spectacular Test Runner for JavaScript.',
-      //   'logo': 'karma.png'
-      // },
-      // {
-      //   'key': 'protractor',
-      //   'title': 'Protractor',
-      //   'url': 'https://github.com/angular/protractor',
-      //   'description': 'End to end test framework for AngularJS applications built on top of WebDriverJS.',
-      //   'logo': 'protractor.png'
-      // },
-      // {
-      //   'key': 'jquery',
-      //   'title': 'jQuery',
-      //   'url': 'http://jquery.com/',
-      //   'description': 'jQuery is a fast, small, and feature-rich JavaScript library.',
-      //   'logo': 'jquery.jpg'
-      // }
+      {
+        'key': 'karma',
+        'title': 'Karma',
+        'url': 'http://karma-runner.github.io/',
+        'description': 'Spectacular Test Runner for JavaScript.',
+        'logo': 'karma.png'
+      },
+      {
+        'key': 'protractor',
+        'title': 'Protractor',
+        'url': 'https://github.com/angular/protractor',
+        'description': 'End to end test framework for AngularJS applications built on top of WebDriverJS.',
+        'logo': 'protractor.png'
+      },
+      {
+        'key': 'jquery',
+        'title': 'jQuery',
+        'url': 'http://jquery.com/',
+        'description': 'jQuery is a fast, small, and feature-rich JavaScript library.',
+        'logo': 'jquery.jpg'
+      }
     ];
 
     $scope.images = [
@@ -110,23 +110,25 @@ angular.module('myApp', [
       $scope.sync = $scope.sync > $scope.data.length - 1 ? 0 : $scope.sync;
     }, 3000);
 
-    $scope.displayed = 5;
-    $scope.perSlide = 5;
-    $scope.autoplay = false;
-    $scope.pauseOnHover = true;
+    $scope.options = {
+      displayed : 3,
+      perSlide : 3,
+      autoplay : true,
+      pauseOnHover : true,
 
-    $scope.shouldCenter = false;
-    $scope.stopAfterAction = false;
-    $scope.timeInterval = 2000;
+      shouldCenter : false,
+      stopAfterAction : false,
+      timeInterval : 2000,
 
-    $scope.minWidth = 250;
+      hideNav : true,
+      hidePager : true,
+      navOnHover : false,
+      pagerOnHover : false,
 
-    $scope.hideNav = false;
-    $scope.hidePager = false;
-    $scope.navOnHover = false;
-    $scope.pagerOnHover = false;
+      swipable : true
 
-    $scope.swipable = true;
+    };
+
     $scope.syncing = false;
     $scope.rtl = false;
     $scope.sync = $scope.syncing ? 0 : null;

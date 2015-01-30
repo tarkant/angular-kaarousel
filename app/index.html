@@ -182,24 +182,8 @@
 
         <!-- KAAROUSEL -->
         <kaarousel
-              displayed="displayed"
-              per-slide="perSlide"
-              autoplay="autoplay"
-              pause-on-hover="pauseOnHover"
-              stop-after-action="stopAfterAction"
-              time-interval="timeInterval"
-              center-active="shouldCenter"
-              update-rate="updateRate"
-              hide-nav="hideNav"
-              hide-pager="hidePager"
-              nav-on-hover="navOnHover"
-              pager-on-hover="pagerOnHover"
-              kaa-swipable="swipable"
-              sync="sync"
-              data="data"
-              min-width="minWidth"
-              on-slide="afterSlide()"
-              animation="'slide'"><kaarousel-slide
+              options="options"
+              on-slide="afterSlide()"><kaarousel-slide
               slide="slide"
               ng-style="itemStyles()"
               ng-repeat="slide in data | orderBy:'rank' track by $index"
