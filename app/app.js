@@ -56,6 +56,58 @@ angular.module('myApp', [
       }
     ];
 
+    $scope.data2 = [
+      {
+        'key': 'angular',
+        'title': 'AngularJS LOOOOL',
+        'url': 'https://angularjs.org/',
+        'description': 'HTML enhanced for web apps!',
+        'logo': 'angular.png'
+      },
+      {
+        'key': 'browsersync',
+        'title': 'BrowserSync',
+        'url': 'http://browsersync.io/',
+        'description': 'Time-saving synchronised browser testing.',
+        'logo': 'browsersync.png'
+      },
+      {
+        'key': 'gulp',
+        'title': 'GulpJS',
+        'url': 'http://gulpjs.com/',
+        'description': 'The streaming build system.',
+        'logo': 'gulp.png'
+      },
+      {
+        'key': 'jasmine',
+        'title': 'Jasmine',
+        'url': 'http://jasmine.github.io/',
+        'description': 'Behavior-Driven JavaScript.',
+        'logo': 'jasmine.png'
+      },
+      {
+        'key': 'karma',
+        'title': 'Karma',
+        'url': 'http://karma-runner.github.io/',
+        'description': 'Spectacular Test Runner for JavaScript.',
+        'logo': 'karma.png'
+      },
+      {
+        'key': 'protractor',
+        'title': 'Protractor',
+        'url': 'https://github.com/angular/protractor',
+        'description': 'End to end test framework for AngularJS applications built on top of WebDriverJS.',
+        'logo': 'protractor.png'
+      },
+      {
+        'key': 'jquery',
+        'title': 'jQuery',
+        'url': 'http://jquery.com/',
+        'description': 'jQuery is a fast, small, and feature-rich JavaScript library.',
+        'logo': 'jquery.jpg'
+      }
+    ];
+
     $scope.images = [
       {
         url : 'http://lorempicsum.com/futurama/627/300/4'
@@ -111,7 +163,8 @@ angular.module('myApp', [
     }, 3000);
 
     $scope.options = {
-      displayed : 3,
+
+      displayed : 5,
       perSlide : 3,
       autoplay : true,
       pauseOnHover : true,
@@ -125,24 +178,37 @@ angular.module('myApp', [
       navOnHover : false,
       pagerOnHover : false,
 
-      swipable : true
+      swipable : true,
+      syncing : false,
+      updateRate : 300,
+
+      minWidth: 250
 
     };
 
-    $scope.syncing = false;
-    $scope.rtl = false;
-    $scope.sync = $scope.syncing ? 0 : null;
+    $scope.options2 = {
 
-    $scope.updateRate = 300;
+      displayed : 2,
+      perSlide : 2,
+      autoplay : false,
+      pauseOnHover : false,
 
-    $scope.optionsII = {
-      displayed : 1,
-      loop : true,
-      animation : 'shuffle',
-      perSlide : 1,
-      timeInterval : 1500,
-      autoplay: false
+      shouldCenter : false,
+      stopAfterAction : false,
+      timeInterval : 5000,
+
+      hideNav : true,
+      hidePager : true,
+      navOnHover : false,
+      pagerOnHover : false,
+
+      swipable : true,
+      syncing : false,
+      updateRate : 500
+
     };
+
+    $scope.sync = $scope.options.syncing ? 0 : null;
 
     $scope.afterSlide = function () {
       $scope.onslide = 'I\'ve slidded ...';

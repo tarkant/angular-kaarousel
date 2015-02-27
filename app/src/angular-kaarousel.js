@@ -1,8 +1,180 @@
 'use strict';
 
-angular.module('angular-kaarousel', [
-    'ngTouch'
-  ])
+angular.module('angular-kaarousel', ['ngTouch'])
+
+  .directive('kaarousel', function (KaarouselFactory, $timeout, $interval) {
+    return {
+      restrict: 'EA',
+      scope: {
+        displayed: '=?',
+        perSlide: '=?',
+        autoplay: '=?',
+        pauseOnHover: '=?',
+        centerActive: '=?',
+        timeInterval: '=?',
+        updateRate: '=?',
+        stopAfterAction: '=?',
+        hideNav: '=?',
+        hidePager: '=?',
+        navOnHover: '=?',
+        pagerOnHover: '=?',
+        isSwipable: '=?',
+        sync: '=?',
+        data: '=?',
+        animation: '=?',
+        loop: '=?',
+        options: '=?',
+        onSlide: '&?',
+        minWidth: '=?',
+        expand: '=?'
+      },
+      templateUrl: 'src/angular-kaarousel.html',
+      transclude: true,
+      controller: function ( $scope, $element, $attrs ) {
+
+        var self = this;
+
+        self.DOM = [];
+
+        self.update = function ( resetInterval ) {
+          self.setSettings();
+        };
+
+        self.move = function ( where ) {
+          self.factory.move(where);
+          $scope.$broadcast('updateIndex', self.factory.get('activeIndex'));
+        };
+
+        self.setSettings = function () {
+          self.settings = self.getFactory().makeConf($attrs, $scope);
+          return self.settings;
+        };
+
+        self.getSettings = function () {
+          if ( !self.settings ) {
+            self.setSettings();
+          }
+          return self.settings;
+        }
+
+        self.getParentScope = function () {
+          return $scope;
+        };
+
+        self.getFactory = function () {
+          if ( !self.factory ) {
+            self.factory = new KaarouselFactory();
+          }
+          return self.factory;
+        };
+
+        self.register = function ( what, value ) {
+          self.getFactory().set('sliderDomElement', value);
+        };
+
+        self.reachedLastItem = function () {
+
+          if ( self.isReady ) {
+            self.update();
+          }
+
+          self.isReady = true;
+          $scope.shouldAnim = true;
+
+          if ( self.settings.autoplay && !self.playing ) {
+            self.setInterval();
+          }
+
+          self.factory.set('elements', self.elements);
+          self.factory.set('slides', self.slides);
+          self.factory.set('sizes', self.sizes);
+
+          console.log(self.factory.get('slides'));
+
+        };
+
+        self.addSlide = function ( element, data ) {
+
+          console.log('Add a slide');
+
+          var aElement = angular.element(element);
+
+          self.elements = self.elements || [];
+          self.slides = self.slides || [];
+          self.sizes = self.sizes || [];
+
+          self.elements.push(element);
+
+          if ( data ) {
+            self.slides.push(data);
+          }
+
+          self.sizes.push({
+            width: aElement.outerWidth(),
+            height: aElement.outerHeight()
+          });
+
+        };
+
+        self.setInterval = function () {
+          
+        };
+
+      },
+      link: function (scope, element, attrs, ctrl) {
+        
+        var watchTimeout, 
+            factory = ctrl.getFactory(),
+            watchers = '[autoplay,timeInterval,displayed,perSlide,centerActive,stopAfterAction,pauseOnHover]';
+
+        angular.element(element).addClass('kaarousel');
+
+        scope.ctrl = ctrl;
+
+        ctrl.getSettings();
+
+        scope.move = function ( where ) {
+          ctrl.move(where);
+        };
+
+        scope.$watchCollection(watchers, function ( newValues, oldValues ) {
+          
+          $timeout.cancel(watchTimeout);
+          watchTimeout = $timeout( function () {
+            var reset = false;
+            for ( var i = 0; i < 2; i++ ) {
+              if ( newValues[i] !== oldValues[i] ) {
+                reset = true;
+                break;
+              }
+            }
+            ctrl.update(reset);
+          }, ctrl.getSettings().updateRate);
+        });
+
+      }
+    };
+  })
+
+  .directive('kaarouselSlider', function ( $compile ) {
+    return {
+      restrict: 'EA',
+      require: '^kaarousel',
+      link: function (scope, element, attrs, ctrl) {
+
+        var dummy = '<kaarousel-dummy class="dummy" ng-style="getStyles()"></kaarousel-dummy>',
+            slider = angular.element(element);
+
+        ctrl.register('slider', element);
+        slider.addClass(ctrl.getSettings().animation + '-animation');
+
+        $compile(dummy)(scope, function (elt) {
+          slider.prepend(elt);
+        });
+
+      }
+    };
+  })
 
   /**
 
@@ -13,9 +185,7 @@ angular.module('angular-kaarousel', [
   * TODO Add lazyloading
   * TODO Loop option
 
-  */
-
-  .directive('kaarousel', function($interval, $window, $timeout) {
+   .directive('kaarousel', function($interval, $window, $timeout) {
 
     return {
 
@@ -430,7 +600,7 @@ angular.module('angular-kaarousel', [
           }
         };
 
-        this.shouldHideNav = function () {
+        self.shouldHideNav = function () {
           self.getConf();
           return self.getNbElements() <= conf.displayed;
         };
@@ -514,11 +684,6 @@ angular.module('angular-kaarousel', [
     };
   })
 
-  /**
-  * Kaarousel Wrapper
-  * Main job here is to handle swipe
-  */
-
   .directive('kaarouselWrapper', function ( $swipe, $timeout ) {
 
     return {
@@ -598,12 +763,6 @@ angular.module('angular-kaarousel', [
 
   })
 
-  /**
-  * Directive on the moving part ot the slider
-  * It's a dummy that will play the role here
-  * It's added before the slides
-  */
-
   .directive('kaarouselSlider', function ( $compile ) {
     return {
       restrict: 'EA',
@@ -628,13 +787,6 @@ angular.module('angular-kaarousel', [
       }
     };
   })
-
-  /**
-  * Directive on each slides
-  * It does the job of checking if the slide
-  * is the current one or if it's visible
-  * also apply styles ( width of the item )
-  */
 
   .directive('kaarouselSlide', function () {
     return {
@@ -763,4 +915,4 @@ angular.module('angular-kaarousel', [
         };
       }
     };
-  });
+  });*/

@@ -1,50 +1,22 @@
 <!-- KAAROUSEL MAIN WRAPPER -->
-<kaarousel-container class="kaarousel-actions-wrapper" ng-if="autoplay" ng-mouseenter="mouseEnterCallback()" ng-mouseleave="mouseLeaveCallback()">
+<kaarousel-container class="kaarousel-actions-wrapper">
 
 	<!-- SLIDER WRAPPER -->
-	<kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}">
-
+	<kaarousel-wrapper class="kaarousel-wrapper" ng-class="{anim: shouldAnim, dragging: dragging}">
 		<!-- SLIDING PART -->
 		<kaarousel-slider ng-transclude class="kaarousel-slider"></kaarousel-slider>
-
 	</kaarousel-wrapper>
 
 	<!-- PREV / NEXT NAV -->
 	<kaarousel-nav class="kaarousel-nav" ng-class="{'is-hidden': hideNav}">
-		<kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev>
-		<kaarousel-next ng-click="goNext()" ng-if="!shouldHideNav" class="kaarousel-next">NEXT</kaarousel-next>
+		<kaarousel-prev ng-click="move('prev')" ng-class="{hidden: hidePrev}" class="kaarousel-prev">PREV</kaarousel-prev>
+		<kaarousel-next ng-click="move('next')" ng-class="{hidden: hideNext}" class="kaarousel-next">NEXT</kaarousel-next>
 	</kaarousel-nav>
 
 	<!-- PAGER -->
 	<kaarousel-pager class="kaarousel-pager" ng-class="{'is-hidden': hidePager}">
 		<ul>
-			<li ng-repeat="i in slides track by $index"  ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
-		</ul>
-	</kaarousel-pager>
-
-</kaarousel-container>
-
-<!-- KAAROUSEL MAIN WRAPPER -->
-<kaarousel-container class="kaarousel-actions-wrapper" ng-if="!autoplay">
-
-	<!-- SLIDER WRAPPER -->
-	<kaarousel-wrapper class="kaarousel-wrapper" ng-class="{shouldAnim: shouldAnim, dragging: dragging}">
-
-		<!-- SLIDING PART -->
-		<kaarousel-slider ng-transclude class="kaarousel-slider"></kaarousel-slider>
-
-	</kaarousel-wrapper>
-
-	<!-- PREV / NEXT NAV -->
-	<kaarousel-nav class="kaarousel-nav" ng-class="{'is-hidden': hideNav}">
-		<kaarousel-prev ng-click="goPrev()" ng-if="!shouldHideNav" class="kaarousel-prev">PREV</kaarousel-prev>
-		<kaarousel-next ng-click="goNext()" ng-if="!shouldHideNav" class="kaarousel-next">NEXT</kaarousel-next>
-	</kaarousel-nav>
-
-	<!-- PAGER -->
-	<kaarousel-pager class="kaarousel-pager" ng-class="{'is-hidden': hidePager}" ng-if="!shouldHideNav">
-		<ul>
-			<li ng-repeat="item in slides track by $index"  ng-click="goTo($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
+			<li ng-repeat="i in slides track by $index" ng-click="move($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
 		</ul>
 	</kaarousel-pager>
 

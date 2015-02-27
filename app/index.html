@@ -59,41 +59,41 @@
             <div class="tab-pane active" id="basic-tab">
               <div class="form-group col-xs-4">
                 <label>Displayed elements</label>
-                <input type="number" ng-model="displayed" class="form-control">
+                <input type="number" ng-model="options.displayed" class="form-control">
               </div>
               <div class="form-group col-xs-4">
                 <label>Sliding n at the time</label>
-                <input type="number" ng-model="perSlide" class="form-control">
+                <input type="number" ng-model="options.perSlide" class="form-control">
               </div>
               <div class="form-group col-xs-4">
                 <label>Time interval</label>
-                <input type="number" ng-model="timeInterval" class="form-control">
+                <input type="number" ng-model="options.timeInterval" class="form-control">
               </div>
               <div class="form-group col-xs-4">
                 <label>Autoplay switch</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="autoplay">
+                    <input type="checkbox" ng-model="options.autoplay">
                   </span>
-                  <input type="text" ng-model="autoplay" class="form-control">
+                  <input type="text" ng-model="options.autoplay" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-4">
                 <label>Pause on hover</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="pauseOnHover">
+                    <input type="checkbox" ng-model="options.pauseOnHover">
                   </span>
-                  <input type="text" ng-model="pauseOnHover" class="form-control">
+                  <input type="text" ng-model="options.pauseOnHover" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-4">
                 <label>Allow swiping</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="swipable">
+                    <input type="checkbox" ng-model="options.swipable">
                   </span>
-                  <input type="text" ng-model="swipable" class="form-control">
+                  <input type="text" ng-model="options.swipable" class="form-control">
                 </div>
               </div>
             </div>
@@ -102,36 +102,36 @@
                 <label>Hide Prev/Next nav</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="hideNav">
+                    <input type="checkbox" ng-model="options.hideNav">
                   </span>
-                  <input type="text" ng-model="hideNav" class="form-control">
+                  <input type="text" ng-model="options.hideNav" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-6">
                 <label>Show nav on hover</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="navOnHover">
+                    <input type="checkbox" ng-model="options.navOnHover">
                   </span>
-                  <input type="text" ng-model="navOnHover" class="form-control">
+                  <input type="text" ng-model="options.navOnHover" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-6">
                 <label>Hide pager</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="hidePager">
+                    <input type="checkbox" ng-model="options.hidePager">
                   </span>
-                  <input type="text" ng-model="hidePager" class="form-control">
+                  <input type="text" ng-model="options.hidePager" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-6">
                 <label>Show pager on hover</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="pagerOnHover">
+                    <input type="checkbox" ng-model="options.pagerOnHover">
                   </span>
-                  <input type="text" ng-model="pagerOnHover" class="form-control">
+                  <input type="text" ng-model="options.pagerOnHover" class="form-control">
                 </div>
               </div>
             </div>
@@ -140,77 +140,83 @@
                 <label>Should center the active slide</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="shouldCenter">
+                    <input type="checkbox" ng-model="options.shouldCenter">
                   </span>
-                  <input type="text" ng-model="shouldCenter" class="form-control">
+                  <input type="text" ng-model="options.shouldCenter" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-4">
                 <label>Should stop after user action</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="stopAfterAction">
+                    <input type="checkbox" ng-model="options.stopAfterAction">
                   </span>
-                  <input type="text" ng-model="stopAfterAction" class="form-control">
+                  <input type="text" ng-model="options.stopAfterAction" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-4">
                 <label>Should sync with something</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="syncing"> ( {{sync}} )
+                    <input type="checkbox" ng-model="options.syncing"> ( {{sync}} )
                   </span>
-                  <input type="text" ng-model="syncing" class="form-control">
+                  <input type="text" ng-model="options.syncing" class="form-control">
                 </div>
               </div>
-              <!-- <div class="form-group col-xs-4">
-                <label>Should go Right to Left</label>
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="checkbox" ng-model="rtl">
-                  </span>
-                  <input type="text" ng-model="rtl" class="form-control">
-                </div>
-              </div> -->
+              <div class="form-group col-xs-4">
+                <label>Update rate</label>
+                <input type="number" ng-model="options.updateRate" class="form-control">
+              </div>
             </div>
           </div>
         </div>
 
-        <pre>
-          {{minWidth}}
-        </pre>
-
         <!-- KAAROUSEL -->
+
         <kaarousel
-              options="options"
+              displayed="options.displayed"
+              per-slide="options.perSlide"
+              autoplay="options.autoplay"
+              pause-on-hover="options.pauseOnHover"
+              center-active="options.centerActive"
+              time-interval="options.timeInterval"
+              stop-after-action="options.stopAfterAction"
+              hide-nav="options.hideNav"
+              hide-pager="options.hidePager"
+              nav-on-hover="options.navOnHover"
+              pager-on-hover="options.pagerOnHover"
+              is-swipable="options.swipable"
+              sync="options.sync"
+              loop="options.loop"
+              min-width="options.minWidth"
+              expand="options.expand"
+
               on-slide="afterSlide()"><kaarousel-slide
               slide="slide"
               ng-style="itemStyles()"
               ng-repeat="slide in data | orderBy:'rank' track by $index"
-              ng-class="{selected: isActive(), visible: isVisible()}">
-            <!-- Whaterver you want to put in the slide -->
+              ng-class="{selected: isActive, visible: isVisible()}">
+            <!-- Whatever you want to put in the slide -->
             <ng-include src="'slide-tpl.html'"></ng-include>
           </kaarousel-slide></kaarousel>
 
         <!-- / KAAROUSEL -->
 
-        <pre>
-          {{onslide}}
-        </pre>
+        <!-- KAAROUSEL -->
 
-        <p><a class="btn btn-lg btn-success" ng-href="#">Splendid!</a></p>
-      </div>
-
-      <!-- <div class="jumbotron text-center">
-        <kaarousel class="image-slider"
-          options="optionsII"
-          data="images"><kaarousel-slide slide="image"
-            ng-repeat="image in images track by $index"
-            ng-style="itemStyles()"
-            ng-class="{selected: isActive(), visible: isVisible()}">
-            <img ng-src="{{image.url}}" kaarousel-image>
+        <kaarousel
+              options="options2"><kaarousel-slide
+              slide="slide"
+              ng-style="itemStyles()"
+              ng-repeat="slide in data2 | orderBy:'rank' track by $index"
+              ng-class="{selected: isActive, visible: isVisible()}">
+            <!-- Whatever you want to put in the slide -->
+            <ng-include src="'slide-tpl.html'"></ng-include>
           </kaarousel-slide></kaarousel>
-      </div> -->
+
+        <!-- / KAAROUSEL -->
+
+      </div>
 
       <hr>
 
@@ -244,6 +250,8 @@
     <!-- build:js({app,.tmp}) scripts/main.js -->
     <script src="app.js"></script>
     <script src="src/angular-kaarousel.js"></script>
+    <script src="src/angular-kaarousel-factory.js"></script>
+    <script src="src/angular-kaarousel-items.js"></script>
     <!-- inject:partials -->
     <!-- endinject -->
     <!-- endbuild -->
