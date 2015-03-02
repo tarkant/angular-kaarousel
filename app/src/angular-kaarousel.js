@@ -12,6 +12,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
         pauseOnHover: '=?',
         centerActive: '=?',
         timeInterval: '=?',
+        transitionDuration: '=?',
         updateRate: '=?',
         stopAfterAction: '=?',
         hideNav: '=?',
@@ -24,7 +25,8 @@ angular.module('angular-kaarousel', ['ngTouch'])
         animation: '=?',
         loop: '=?',
         options: '=?',
-        onSlide: '&?',
+        afterSlide: '@?',
+        beforeSlide: '@?',
         minWidth: '=?',
         expand: '=?'
       },
@@ -66,6 +68,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
         self.getFactory = function () {
           if ( !self.factory ) {
             self.factory = new KaarouselFactory();
+            self.factory.set('scope', $scope);
           }
           return self.factory;
         };
@@ -121,9 +124,10 @@ angular.module('angular-kaarousel', ['ngTouch'])
         
         var watchTimeout,
             windowTimeout,
+            isSyncing = false,
             factory = ctrl.getFactory(),
             windowObj = angular.element($window),
-            watchers = '[autoplay,timeInterval,displayed,perSlide,centerActive,stopAfterAction,pauseOnHover,minWidth,hideNav,hidePager,navOnHover,pagerOnHover]';
+            watchers = '[autoplay,timeInterval,loop,displayed,perSlide,centerActive,stopAfterAction,pauseOnHover,minWidth,hideNav,hidePager,navOnHover,pagerOnHover,transitionDuration]';
 
         angular.element(element).addClass('kaarousel');
 
@@ -133,11 +137,10 @@ angular.module('angular-kaarousel', ['ngTouch'])
         scope.factory = factory;
 
         scope.$watchCollection(watchers, function ( newValues, oldValues ) {
-          
           $timeout.cancel(watchTimeout);
           watchTimeout = $timeout( function () {
             var reset = false;
-            for ( var i = 0; i < 2; i++ ) {
+            for ( var i = 0; i < 3; i++ ) {
               if ( newValues[i] !== oldValues[i] ) {
                 reset = true;
                 break;
@@ -162,6 +165,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
           oldValue = parseInt(oldValue, 10);
 
           if ( !isNaN(newValue) && isNaN(oldValue) ) {
+            isSyncing = true;
             factory.setInterval( true );
           }
 
@@ -172,8 +176,9 @@ angular.module('angular-kaarousel', ['ngTouch'])
             factory.move(newValue, false);
           }
 
-          if ( isNaN(newValue) && !isNaN(oldValue) ) {
-            ctrl.update( true );
+          if ( isNaN(newValue) && !isNaN(oldValue) && !isSyncing ) {
+            ctrl.update(true);
+            isSyncing = false;
           }
 
         });

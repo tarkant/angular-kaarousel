@@ -9,23 +9,17 @@ angular.module('angular-kaarousel')
 
         var factory = ctrl.getFactory();
 
-        scope.shouldHideNav = factory.get('shouldHideNav');
-
-        var shouldHideNav = function () {
+        scope.shouldHideNav = function () {
           return factory.get('shouldHideNav') || factory.get('elements').length <= ctrl.getSettings().displayed;
         };
 
-        scope.$watch(function () {
-          return ctrl.getSettings();
-        }, function () {
-          scope.shouldHideNav = shouldHideNav();
-        });
+        scope.shouldHideNext = function () {
+          return factory.get('shouldHideNext');
+        };
 
-        scope.$watch(function () {
-          return factory.get('shouldHideNav');
-        }, function () {
-          scope.shouldHideNav = shouldHideNav();
-        });
+        scope.shouldHidePrev = function () {
+          return factory.get('shouldHidePrev');
+        };
 
       }
     };
@@ -38,13 +32,9 @@ angular.module('angular-kaarousel')
       link: function (scope, element, attrs, ctrl) {
         var factory = ctrl.getFactory();
         
-        scope.shouldHidePager = factory.get('shouldHidePager');
-        
-        scope.$watch(function () {
+        scope.shouldHidePager = function () {
           return factory.get('shouldHidePager');
-        }, function ( value ) {
-          scope.shouldHidePager = value;
-        });
+        };
 
       }
     };

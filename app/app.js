@@ -173,7 +173,8 @@ angular.module('myApp', [
 
       centerActive : false,
       stopAfterAction : false,
-      timeInterval : 2000,
+      timeInterval : 3500,
+      transitionDuration: 700,
 
       hideNav : false,
       hidePager : false,
@@ -182,7 +183,9 @@ angular.module('myApp', [
       sync : null,
 
       swipable : true,
-      updateRate : 300
+      updateRate : 300,
+      expand : true,
+      loop: true
 
     };
 
@@ -216,13 +219,6 @@ angular.module('myApp', [
         tb.push(i);
       };
       return tb;
-    }
-
-    $scope.afterSlide = function () {
-      $scope.onslide = 'I\'ve slidded ...';
-      $timeout(function () {
-        $scope.onslide = null;
-      }, $scope.timeInterval / 3);
     }
 
   });

@@ -70,6 +70,10 @@
                 <input type="number" ng-model="options.timeInterval" class="form-control">
               </div>
               <div class="form-group col-xs-4">
+                <label>Transition Duration</label>
+                <input type="number" ng-model="options.transitionDuration" class="form-control">
+              </div>
+              <div class="form-group col-xs-4">
                 <label>Autoplay switch</label>
                 <div class="input-group">
                   <span class="input-group-addon">
@@ -180,6 +184,15 @@
                   <input type="text" ng-model="options.expand" class="form-control">
                 </div>
               </div>
+              <div class="form-group col-xs-4">
+                <label>Loop</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="options.loop">
+                  </span>
+                  <input type="text" ng-model="options.loop" class="form-control">
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -203,8 +216,10 @@
               loop="options.loop"
               min-width="options.minWidth"
               expand="options.expand"
+              transition-duration="options.transitionDuration"
 
-              on-slide="afterSlide()"><kaarousel-slide
+              before-slide="beforeSlide"
+              after-slide="afterSlide"><kaarousel-slide
               slide="slide"
               ng-style="itemStyles()"
               ng-repeat="slide in data | orderBy:'rank' track by $index"
@@ -216,21 +231,18 @@
         <!-- / KAAROUSEL -->
       </div>
 
-      <div class="jumbotron">
+      <!-- <div class="jumbotron">
         <repeat ng-repeat="i in get(15)">
-          <!-- KAAROUSEL -->
           <kaarousel
                 options="options2"><kaarousel-slide
                 slide="slide"
                 ng-style="itemStyles()"
                 ng-repeat="slide in data2 | orderBy:'rank' track by $index"
                 ng-class="{selected: isActive(), visible: isVisible()}">
-              <!-- Whatever you want to put in the slide -->
               <ng-include src="'slide-tpl.html'"></ng-include>
             </kaarousel-slide></kaarousel>
-          <!-- / KAAROUSEL -->
         </repeat>
-      </div>
+      </div> -->
       
       <hr>
 
