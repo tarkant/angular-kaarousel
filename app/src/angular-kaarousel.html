@@ -8,15 +8,15 @@
 	</kaarousel-wrapper>
 
 	<!-- PREV / NEXT NAV -->
-	<kaarousel-nav class="kaarousel-nav" ng-class="{'is-hidden': hideNav}">
-		<kaarousel-prev ng-click="move('prev')" ng-class="{hidden: hidePrev}" class="kaarousel-prev">PREV</kaarousel-prev>
-		<kaarousel-next ng-click="move('next')" ng-class="{hidden: hideNext}" class="kaarousel-next">NEXT</kaarousel-next>
+	<kaarousel-nav class="kaarousel-nav" ng-class="{'is-hidden': shouldHideNav}">
+		<kaarousel-prev ng-click="move('prev')" ng-class="{'is-hidden': hidePrev}" class="kaarousel-prev">PREV</kaarousel-prev>
+		<kaarousel-next ng-click="move('next')" ng-class="{'is-hidden': hideNext}" class="kaarousel-next">NEXT</kaarousel-next>
 	</kaarousel-nav>
 
 	<!-- PAGER -->
-	<kaarousel-pager class="kaarousel-pager" ng-class="{'is-hidden': hidePager}">
+	<kaarousel-pager class="kaarousel-pager" ng-class="{'is-hidden': shouldHidePager}">
 		<ul>
-			<li ng-repeat="i in slides track by $index" ng-click="move($index)" ng-class="{selected: $index === currentIndex}">{{$index}}</li>
+			<li ng-repeat="i in factory.elements track by $index" ng-click="move($index)" ng-class="{selected: $index === factory.activeIndex}">{{$index}}</li>
 		</ul>
 	</kaarousel-pager>
 

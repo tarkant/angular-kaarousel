@@ -7,7 +7,8 @@ angular.module('angular-kaarousel')
       require: '^kaarousel',
       link: function (scope, element, attrs, ctrl) {
 
-        var parentScope = ctrl.getParentScope(), repeatRule;
+        var factory = ctrl.getFactory(),
+            repeatRule, $i = scope.$index;
 
         angular.element(element).addClass('kaarousel-slide');
 
@@ -19,14 +20,16 @@ angular.module('angular-kaarousel')
 
         if ( scope.$last ) { ctrl.reachedLastItem(); }
 
-        scope.isActive = ctrl.getFactory().activeIndex === scope.$index;
+        scope.isActive = function () {
+          return factory.get('activeIndex') === $i;
+        };
 
         scope.itemStyles = function () {
           var conf = ctrl.getSettings(),
-              modulo = scope.$index % conf.displayed,
+              modulo = $i % conf.displayed,
               itemWidth = 100 / conf.displayed,
               styles = {
-                'width' : (100 / conf.displayed ) + '%'
+                'width' : itemWidth + '%'
               };
 
           if ( conf.animation === 'shuffle' ) {
@@ -38,13 +41,26 @@ angular.module('angular-kaarousel')
           return styles;
         };
 
-        scope.isVisible = function ( index ) {
-          return false;
+        scope.isVisible = function () {
+          var cu = factory.get('activeIndex'),
+              max = factory.get('elements').length,
+              disp = ctrl.getSettings().displayed;
+
+          if ( ctrl.getSettings().centerActive && factory.get('isCentered') ) {
+            return $i >= cu - Math.floor( disp / 2 ) &&
+                   $i <= cu + Math.floor( disp / 2 ) ||
+                   ( cu + 1 < disp && $i < disp ) ||
+                   ( cu > max - disp - 1 && $i > max - disp - 1);
+          } else {
+            return ( $i >= cu && $i < cu + disp ) ||
+                   ( $i > max - disp - 1 && cu > max - disp - 1 );
+          }
         };
 
-        parentScope.$on('updateIndex', function ( event, index ) {
-          scope.isActive = index === scope.$index;
+        scope.$on('$destroy', function () {
+          factory.removeSlide(element);
         });
+
       }
     };
   });

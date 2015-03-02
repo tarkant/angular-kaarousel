@@ -1,7 +1,11 @@
 'use strict';
 
 angular.module('angular-kaarousel')
-  .service('KaarouselFactory', function ($interval) {
+  .service('KaarouselFactory', function ($interval, $timeout) {
+
+    var _pi = function( value ) {
+      return parseInt(value, 10);
+    };
     
     var KaarouselFactory = function () {
       var self = this;
@@ -9,12 +13,18 @@ angular.module('angular-kaarousel')
       self.settings = {};
 
       self.activeIndex = 0;
+      self.interval = 0;
 
       self.sliderDomElement = null;
 
       self.slides = [];
       self.elements = [];
       self.sizes = [];
+
+      self.isReady = false;
+      self.hasStarted = false;
+      self.userAction = null;
+      self.pausedByUser = null;
     };
 
     KaarouselFactory.prototype.defaultSettings = {
@@ -24,20 +34,20 @@ angular.module('angular-kaarousel')
       pauseOnHover: true,
       centerActive: false,
       timeInterval: 3000,
+      transitionDuration: 500,
       stopAfterAction: false,
       hideNav: false,
       hidePager: false,
       navOnHover: false,
       pagerOnHover: false,
-      swipable: true,
+      isSwipable: true,
       sync: false,
-      rtl: false,
       animation: 'slide',
       loop: false,
       onSlide: null,
       minWidth: null,
       expand: true,
-      updateRate: 100  
+      updateRate: 100
     };
 
     KaarouselFactory.prototype.set = function ( what, value ) {
@@ -49,8 +59,6 @@ angular.module('angular-kaarousel')
     };
 
     KaarouselFactory.prototype.makeConf = function ( attrs, scope ) {
-
-      var self = this;
 
       var lookFor = [
         'displayed',
@@ -64,7 +72,7 @@ angular.module('angular-kaarousel')
         'hidePager',
         'navOnHover',
         'pagerOnHover',
-        'swipable',
+        'isSwipable',
         'sync',
         'animation',
         'loop',
@@ -86,9 +94,13 @@ angular.module('angular-kaarousel')
 
       options = angular.extend(angular.copy(this.defaultSettings), options);
 
-      options.displayed = self.computeDisplayed(options);
+      options.displayed = this.computeDisplayed(options);
+      options.perSlide = this.computePerSlides(options);
 
       this.settings = options;
+
+      this.shouldHideNav = this.settings.hideNav;
+      this.shouldHidePager = this.settings.hidePager;
 
       return options;
 
@@ -96,32 +108,44 @@ angular.module('angular-kaarousel')
 
     KaarouselFactory.prototype.computeDisplayed = function ( conf ) {
 
-      var minWidth = parseInt( conf.minWidth, 10 ),
-          conf = Math.abs(Math.ceil(conf.displayed)), out;
+      var minWidth = _pi(conf.minWidth || 0),
+          confDisp = Math.abs(Math.ceil(conf.displayed)), out;
 
-      if ( minWidth && this.sliderDomElement ) {
+      if ( minWidth > 0 && this.sliderDomElement ) {
         out = Math.floor( this.sliderDomElement.width() / minWidth ) || 1;
       }
 
-      if ( !out || out > conf ) {
-        out = conf;
+      if ( !out || out > confDisp ) {
+        out = confDisp;
       }
 
-      if ( this.elements.length > out && out > conf ) {
-        return conf;
+      if ( this.elements.length > out && out > confDisp ) {
+        return confDisp;
       }
-      if ( out === conf && this.elements.length < out && conf.expand ) {
+
+      if ( out === confDisp && this.elements.length < out && conf.expand ) {
         return this.elements.length;
       }
+
       return out;
     };
 
-    KaarouselFactory.prototype.getNumberOf = function( what ) {
-      return self[what].length || null;
+    KaarouselFactory.prototype.computePerSlides = function ( conf ) {
+      var out = Math.abs(Math.ceil(conf.perSlide)),
+          ref = conf.displayed;
+
+      if ( conf.animation !== 'slide' || out > ref ) {
+        out = ref;
+      }
+
+      return out;
     };
 
-    KaarouselFactory.prototype.computeIndex = function(index) {
+    KaarouselFactory.prototype.computeIndex = function(index, strength) {
       var self = this;
+
+      // index = index + (strength || 0);
+
       if ( index >= self.elements.length ) {
         return 0;
       }
@@ -132,20 +156,197 @@ angular.module('angular-kaarousel')
         return 0;
       }
       return index;
-    }
+    };
 
-    KaarouselFactory.prototype.move = function( where, index ) {
+    KaarouselFactory.prototype.move = function( where, isUserAction, preventCallback, strength ) {
       var self = this;
+
+      self.hasStarted = true;
+
+      // Set userAction to true if needed
+      if ( isUserAction && this.settings.stopAfterAction ) {
+        this.userAction = true;
+      }
+      
+      // Reset The Interval
+      this.setInterval(this.shouldStop());
+      
       switch ( where ) {
         case 'next':
-          self.activeIndex = self.computeIndex(self.activeIndex + self.settings.perSlide);
+          self.activeIndex = self.computeIndex(self.activeIndex + self.settings.perSlide, strength);
           break;
         case 'prev':
-          self.activeIndex = self.computeIndex(self.activeIndex - self.settings.perSlide);
+          self.activeIndex = self.computeIndex(self.activeIndex - self.settings.perSlide, strength);
           break;
         default:
-          self.activeIndex = index;
+          self.activeIndex = _pi(where);
           break;
+      }
+
+      this.sliderMargin = - self.getMargin();
+      
+      // Call Callback Function
+      if ( !preventCallback && typeof self.settings.onSlide === 'function' ) {
+        $timeout(function () {
+          self.settings.onSlide();
+        }, self.settings.transitionDuration);
+      }
+    };
+
+    KaarouselFactory.prototype.getStyles = function() {
+
+      this.updateSizes();
+
+      var styles = {};
+      if ( this.activeIndex !== null ) {
+        if ( this.settings.animation === 'slide' ) {
+          styles = {
+            'margin-left': this.sliderMargin + 'px'
+          };
+        } else {
+          if ( this.isReady ) {
+            styles = {
+              'height': this.sizes[this.activeIndex].height
+            };
+          }
+        }
+      }
+      return styles;
+    };
+
+    KaarouselFactory.prototype.setInterval = function( stopping ) {
+      var self = this;
+
+      $interval.cancel(self.interval);
+      self.playing = false;
+
+      if ( stopping || self.settings.sync || self.settings.sync === 0 ) { return; }
+
+      self.interval = $interval( function () {
+        self.playing = true;
+        self.move('next');
+      }, self.settings.timeInterval);
+    };
+
+    KaarouselFactory.prototype.shouldStop = function() {
+      if ( this.settings.autoplay ) {
+        if ( (this.userAction && this.settings.stopAfterAction) || this.pausedByUser ) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    };
+
+    KaarouselFactory.prototype.updateSizes = function () {
+      for ( var j = 0; j < this.elements.length; j++ ) {
+        var elt = angular.element(this.elements[j]);
+        this.sizes[j] = {
+          width : elt.outerWidth(),
+          height : elt.outerHeight()
+        };
+      }
+    };
+
+    KaarouselFactory.prototype.update = function( reset ) {
+      var self = this;
+      if ( reset ) {
+        this.setInterval( this.shouldStop() );
+      }
+      this.bindEvents();
+      if ( this.hasStarted ) {
+        $timeout(function () {
+          self.move(self.activeIndex, false, true);          
+        }, 100);
+      }
+    };
+
+    KaarouselFactory.prototype.getMargin = function () {
+      var margin = 0;
+      for ( var j = 0; j < this.elements.length; j++ ) {
+        if ( j < this.loopUntil(this.activeIndex) && j < this.elements.length - this.settings.displayed ) {
+          margin += this.sizes[j].width;
+        }
+      }
+      return margin;
+    };
+
+    KaarouselFactory.prototype.loopUntil = function ( index ) {
+      this.isCentered = false;
+      if ( this.settings.centerActive && ( this.settings.displayed & 1) ) {
+        index = index - Math.floor( this.settings.displayed / 2 );
+        this.isCentered = true;
+      }
+      return index;
+    };
+
+    KaarouselFactory.prototype.shift = function ( offset ) {
+      this.sliderMargin = - ( this.getMargin() + offset );
+    };
+
+    KaarouselFactory.prototype.removeSlide = function( element ) {
+      this.elements.splice(this.elements.indexOf(element), 1);
+      this.update();
+    };
+
+    KaarouselFactory.prototype.pause = function() {
+      this.pausedByUser = true;
+      this.setInterval(true);
+    };
+
+    KaarouselFactory.prototype.resume = function() {
+      this.pausedByUser = false;
+      this.setInterval(this.shouldStop());
+    };
+
+    KaarouselFactory.prototype.mouseEnterCallback = function () {
+      if ( this.settings.pauseOnHover ) {
+        this.pause();
+      }
+      if ( this.settings.navOnHover ) {
+        this.shouldHideNav = false;
+      }
+      if ( this.settings.pagerOnHover ) {
+        this.shouldHidePager = false;
+      }
+    };
+
+    KaarouselFactory.prototype.mouseLeaveCallback = function () {
+
+      this.wrapperDomElement.trigger('touchend');
+
+      if ( !this.settings.stopAfterHover && this.settings.pauseOnHover ) {
+        this.resume();
+      }
+      if ( this.settings.navOnHover && this.settings.hideNav ) {
+        this.shouldHideNav = true;
+      }
+      if ( this.settings.pagerOnHover && this.settings.hidePager ) {
+        this.shouldHidePager = true;
+      }
+    };
+
+    KaarouselFactory.prototype.bindEvents = function( remove ) {
+      
+      var self = this;
+
+      var needEvents = this.settings.pauseOnHover || this.settings.pagerOnHover || this.settings.navOnHover;
+
+      if ( remove || !needEvents ) {
+        this.wrapperDomElement.unbind();
+        this.binded = false;
+      }
+
+      if ( !remove && needEvents && !this.binded ) {
+        this.binded = true;
+        this.wrapperDomElement.bind({
+          mouseenter: function () {
+            self.mouseEnterCallback();
+          },
+          mouseleave: function () {
+            self.mouseLeaveCallback();
+          }
+        });
       }
     };
 

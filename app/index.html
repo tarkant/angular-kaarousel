@@ -140,9 +140,9 @@
                 <label>Should center the active slide</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="options.shouldCenter">
+                    <input type="checkbox" ng-model="options.centerActive">
                   </span>
-                  <input type="text" ng-model="options.shouldCenter" class="form-control">
+                  <input type="text" ng-model="options.centerActive" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-4">
@@ -158,14 +158,27 @@
                 <label>Should sync with something</label>
                 <div class="input-group">
                   <span class="input-group-addon">
-                    <input type="checkbox" ng-model="options.syncing"> ( {{sync}} )
+                    <input type="checkbox" ng-model="syncing"> ( {{options.sync}} )
                   </span>
-                  <input type="text" ng-model="options.syncing" class="form-control">
+                  <input type="text" ng-model="syncing" class="form-control">
                 </div>
               </div>
               <div class="form-group col-xs-4">
                 <label>Update rate</label>
                 <input type="number" ng-model="options.updateRate" class="form-control">
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Min width</label>
+                <input type="number" ng-model="options.minWidth" class="form-control">
+              </div>
+              <div class="form-group col-xs-4">
+                <label>Expand elements</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="checkbox" ng-model="options.expand">
+                  </span>
+                  <input type="text" ng-model="options.expand" class="form-control">
+                </div>
               </div>
             </div>
           </div>
@@ -195,29 +208,30 @@
               slide="slide"
               ng-style="itemStyles()"
               ng-repeat="slide in data | orderBy:'rank' track by $index"
-              ng-class="{selected: isActive, visible: isVisible()}">
+              ng-class="{selected: isActive(), visible: isVisible()}">
             <!-- Whatever you want to put in the slide -->
             <ng-include src="'slide-tpl.html'"></ng-include>
           </kaarousel-slide></kaarousel>
 
         <!-- / KAAROUSEL -->
-
-        <!-- KAAROUSEL -->
-
-        <kaarousel
-              options="options2"><kaarousel-slide
-              slide="slide"
-              ng-style="itemStyles()"
-              ng-repeat="slide in data2 | orderBy:'rank' track by $index"
-              ng-class="{selected: isActive, visible: isVisible()}">
-            <!-- Whatever you want to put in the slide -->
-            <ng-include src="'slide-tpl.html'"></ng-include>
-          </kaarousel-slide></kaarousel>
-
-        <!-- / KAAROUSEL -->
-
       </div>
 
+      <div class="jumbotron">
+        <repeat ng-repeat="i in get(15)">
+          <!-- KAAROUSEL -->
+          <kaarousel
+                options="options2"><kaarousel-slide
+                slide="slide"
+                ng-style="itemStyles()"
+                ng-repeat="slide in data2 | orderBy:'rank' track by $index"
+                ng-class="{selected: isActive(), visible: isVisible()}">
+              <!-- Whatever you want to put in the slide -->
+              <ng-include src="'slide-tpl.html'"></ng-include>
+            </kaarousel-slide></kaarousel>
+          <!-- / KAAROUSEL -->
+        </repeat>
+      </div>
+      
       <hr>
 
       <div class="footer">
@@ -251,7 +265,9 @@
     <script src="app.js"></script>
     <script src="src/angular-kaarousel.js"></script>
     <script src="src/angular-kaarousel-factory.js"></script>
+    <script src="src/angular-kaarousel-slider.js"></script>
     <script src="src/angular-kaarousel-items.js"></script>
+    <script src="src/angular-kaarousel-nav.js"></script>
     <!-- inject:partials -->
     <!-- endinject -->
     <!-- endbuild -->

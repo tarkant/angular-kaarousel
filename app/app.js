@@ -155,12 +155,14 @@ angular.module('myApp', [
 
     $interval(function () {
       if ( !$scope.syncing ) {
-        $scope.sync = null;
+        $scope.options.sync = null;
         return;
       }
-      $scope.sync++;
-      $scope.sync = $scope.sync > $scope.data.length - 1 ? 0 : $scope.sync;
-    }, 3000);
+      $scope.options.sync++;
+      $scope.options.sync = $scope.options.sync > $scope.data.length - 1 ? 0 : $scope.options.sync;
+    }, 1000);
+
+    $scope.syncing = false;
 
     $scope.options = {
 
@@ -169,46 +171,52 @@ angular.module('myApp', [
       autoplay : true,
       pauseOnHover : true,
 
-      shouldCenter : false,
+      centerActive : false,
       stopAfterAction : false,
       timeInterval : 2000,
 
-      hideNav : true,
-      hidePager : true,
+      hideNav : false,
+      hidePager : false,
       navOnHover : false,
       pagerOnHover : false,
+      sync : null,
 
       swipable : true,
-      syncing : false,
-      updateRate : 300,
-
-      minWidth: 250
+      updateRate : 300
 
     };
 
     $scope.options2 = {
 
-      displayed : 2,
-      perSlide : 2,
-      autoplay : false,
+      displayed : 3,
+      perSlide : 3,
+      autoplay : true,
       pauseOnHover : false,
 
-      shouldCenter : false,
+      centerActive : false,
       stopAfterAction : false,
       timeInterval : 5000,
 
-      hideNav : true,
+      hideNav : false,
       hidePager : true,
       navOnHover : false,
-      pagerOnHover : false,
+      pagerOnHover : true,
 
-      swipable : true,
+      swipable : false,
       syncing : false,
       updateRate : 500
 
     };
 
     $scope.sync = $scope.options.syncing ? 0 : null;
+
+    $scope.get = function  (nb) {
+      var tb = [];
+      for (var i = 0; i < nb; i++) {
+        tb.push(i);
+      };
+      return tb;
+    }
 
     $scope.afterSlide = function () {
       $scope.onslide = 'I\'ve slidded ...';
