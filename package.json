@@ -38,7 +38,11 @@
     "protractor": "^1.0.0",
     "require-dir": "^0.1",
     "uglify-save-license": "^0.4.1",
-    "wiredep": "^1.4.3"
+    "wiredep": "^1.4.3",
+    "gulp-order": "^1.1.1",
+    "gulp-rename": "^1.2.0",
+    "gulp-minify-css": "^0.5.1",
+    "gulp-print": "^1.1.0"
   },
   "engines": {
     "node": ">=0.10.0"

@@ -120,8 +120,17 @@ gulp.task('doTheDistYall', ['jsify'], function () {
 
   return gulp.src('app/src/**/*.js')
     .pipe($.ngAnnotate())
-    // .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
+    .pipe($.order([
+      'angular-kaarousel.js',
+      'app/src/*.js'
+    ]))
+    .pipe($.print())
     .pipe($.concat('angular-kaarousel.js'))
+    .pipe(gulp.dest('dist'))
+    .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
+    .pipe($.rename({
+      suffix: '.min'
+    }))
     .pipe(gulp.dest('dist'))
     .pipe($.size());
     
