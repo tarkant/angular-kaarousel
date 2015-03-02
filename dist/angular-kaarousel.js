@@ -276,10 +276,18 @@ angular.module('angular-kaarousel')
         'expand'
       ], options = {};
 
+      var parse = [
+        'displayed',
+        'perSlide',
+        'minWidth',
+        'timeInterval',
+        'transitionDuration'
+      ];
+
       for (var i = lookFor.length - 1; i >= 0; i--) {
         if ( lookFor[i] in attrs ) {
           if ( scope[lookFor[i]] !== undefined ) {
-            options[lookFor[i]] = scope[lookFor[i]];
+            options[lookFor[i]] = lookFor[i] in parse ? _pi(scope[lookFor[i]]) : scope[lookFor[i]];
           }
         }
       }
