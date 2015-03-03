@@ -41,11 +41,15 @@ angular.module('angular-kaarousel', ['ngTouch'])
           self.getFactory().update(reset);
         };
 
-        self.move = function ( where ) {
-          self.factory.move(where, true);
+        self.updateSync = function () {
           if ( self.getSettings().sync !== false ) {
             $scope.sync = self.getFactory().get('activeIndex');
           }
+        };
+
+        self.move = function ( where ) {
+          self.factory.move(where, true);
+          self.updateSync();
           $scope.$broadcast('updateIndex', self.getFactory().get('activeIndex'));
         };
 

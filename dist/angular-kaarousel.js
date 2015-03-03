@@ -41,11 +41,15 @@ angular.module('angular-kaarousel', ['ngTouch'])
           self.getFactory().update(reset);
         };
 
-        self.move = function ( where ) {
-          self.factory.move(where, true);
+        self.updateSync = function () {
           if ( self.getSettings().sync !== false ) {
             $scope.sync = self.getFactory().get('activeIndex');
           }
+        };
+
+        self.move = function ( where ) {
+          self.factory.move(where, true);
+          self.updateSync();
           $scope.$broadcast('updateIndex', self.getFactory().get('activeIndex'));
         };
 
@@ -749,14 +753,14 @@ angular.module('angular-kaarousel')
             $timeout(function () {
               startCoords = coords;
               lastCoords = null;
+              scope.shouldAnim = false;
+              scope.dragging = true;
             });
           },
           move: function ( coords ) {
             if ( !hasEnough() ) { return; }
             $timeout(function () {
               lastCoords = coords;
-              scope.shouldAnim = false;
-              scope.dragging = true;
               scope.addSwipeOffset();
             });
           },
@@ -764,6 +768,10 @@ angular.module('angular-kaarousel')
             if ( !hasEnough() || !lastCoords ) { return; }
             $timeout(function () {
               var displacement = startCoords.x - lastCoords.x;
+              
+              scope.shouldAnim = true;
+              scope.dragging = false;
+              
               if ( shouldSwipe() ) {
                 if ( displacement > 0 ) {
                   if ( factory.get('activeIndex') < factory.get('elements').length - 1 ) {
@@ -781,8 +789,7 @@ angular.module('angular-kaarousel')
               } else {
                 scope.resetSwipe();
               }
-              scope.shouldAnim = true;
-              scope.dragging = false;
+              ctrl.updateSync();
             });
           },
           cancel: function () {

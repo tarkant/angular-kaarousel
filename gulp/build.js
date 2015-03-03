@@ -108,7 +108,7 @@ gulp.task('jsify', ['clean'], function () {
     .pipe($.size());
 });
 
-gulp.task('doTheDistYall', ['jsify'], function () {
+gulp.task('doDist', ['jsify'], function () {
 
   gulp.src('app/src/*.less')
     .pipe($.plumber())
