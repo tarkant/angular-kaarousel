@@ -42,7 +42,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
         };
 
         self.updateSync = function () {
-          if ( self.getSettings().sync !== false ) {
+          if ( self.getSettings().sync !== null ) {
             $scope.sync = self.getFactory().get('activeIndex');
           }
         };
@@ -131,7 +131,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
             isSyncing = false,
             factory = ctrl.getFactory(),
             windowObj = angular.element($window),
-            watchers = '[autoplay,timeInterval,loop,displayed,perSlide,centerActive,stopAfterAction,pauseOnHover,minWidth,hideNav,hidePager,navOnHover,pagerOnHover,transitionDuration]';
+            watchers = '[autoplay,timeInterval,loop,displayed,perSlide,centerActive,stopAfterAction,pauseOnHover,minWidth,hideNav,hidePager,navOnHover,pagerOnHover,transitionDuration,expand]';
 
         angular.element(element).addClass('kaarousel');
 
@@ -320,7 +320,7 @@ angular.module('angular-kaarousel')
           confDisp = Math.abs(Math.ceil(conf.displayed)), out;
 
       if ( minWidth > 0 && this.sliderDomElement ) {
-        out = Math.floor( this.sliderDomElement.width() / minWidth ) || 1;
+        out = Math.floor( this.sliderDomElement.outerWidth() / minWidth ) || 1;
       }
 
       if ( !out || out > confDisp ) {
@@ -753,8 +753,6 @@ angular.module('angular-kaarousel')
             $timeout(function () {
               startCoords = coords;
               lastCoords = null;
-              scope.shouldAnim = false;
-              scope.dragging = true;
             });
           },
           move: function ( coords ) {
@@ -762,6 +760,8 @@ angular.module('angular-kaarousel')
             $timeout(function () {
               lastCoords = coords;
               scope.addSwipeOffset();
+              scope.shouldAnim = false;
+              scope.dragging = true;
             });
           },
           end: function () {

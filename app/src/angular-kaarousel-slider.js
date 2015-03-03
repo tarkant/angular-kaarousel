@@ -47,8 +47,6 @@ angular.module('angular-kaarousel')
             $timeout(function () {
               startCoords = coords;
               lastCoords = null;
-              scope.shouldAnim = false;
-              scope.dragging = true;
             });
           },
           move: function ( coords ) {
@@ -56,6 +54,8 @@ angular.module('angular-kaarousel')
             $timeout(function () {
               lastCoords = coords;
               scope.addSwipeOffset();
+              scope.shouldAnim = false;
+              scope.dragging = true;
             });
           },
           end: function () {

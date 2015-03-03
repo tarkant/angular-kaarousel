@@ -184,6 +184,7 @@ angular.module('myApp', [
 
       swipable : true,
       updateRate : 300,
+      minWidth : 300,
       expand : true,
       loop: true
 

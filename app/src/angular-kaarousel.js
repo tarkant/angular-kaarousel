@@ -42,7 +42,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
         };
 
         self.updateSync = function () {
-          if ( self.getSettings().sync !== false ) {
+          if ( self.getSettings().sync !== null ) {
             $scope.sync = self.getFactory().get('activeIndex');
           }
         };
@@ -131,7 +131,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
             isSyncing = false,
             factory = ctrl.getFactory(),
             windowObj = angular.element($window),
-            watchers = '[autoplay,timeInterval,loop,displayed,perSlide,centerActive,stopAfterAction,pauseOnHover,minWidth,hideNav,hidePager,navOnHover,pagerOnHover,transitionDuration]';
+            watchers = '[autoplay,timeInterval,loop,displayed,perSlide,centerActive,stopAfterAction,pauseOnHover,minWidth,hideNav,hidePager,navOnHover,pagerOnHover,transitionDuration,expand]';
 
         angular.element(element).addClass('kaarousel');
 
