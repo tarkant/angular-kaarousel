@@ -221,6 +221,8 @@ angular.module('angular-kaarousel')
       self.hasStarted = false;
       self.userAction = null;
       self.pausedByUser = null;
+
+      self.isEnabled = true;
     };
 
     KaarouselFactory.prototype.defaultSettings = {
@@ -307,8 +309,8 @@ angular.module('angular-kaarousel')
 
       this.settings = options;
 
-      this.shouldHideNav = this.settings.hideNav;
-      this.shouldHidePager = this.settings.hidePager;
+      this.shouldHideNav = !this.canSlide() ? true : this.settings.hideNav;
+      this.shouldHidePager = !this.canSlide() ? true : this.settings.hidePager;
 
       return options;
 
@@ -339,7 +341,7 @@ angular.module('angular-kaarousel')
     };
 
     KaarouselFactory.prototype.computePerSlides = function ( conf ) {
-      var out = Math.abs(Math.ceil(conf.perSlide)),
+      var out = Math.abs(Math.ceil(conf.perSlide)) || 1,
           ref = conf.displayed;
 
       if ( conf.animation !== 'slide' || out > ref ) {
@@ -456,7 +458,10 @@ angular.module('angular-kaarousel')
       var self = this;
 
       $interval.cancel(self.interval);
-      self.playing = false;
+
+      if ( stopping ) {
+        self.playing = false;
+      }
 
       self.hideNavs();
 
@@ -471,7 +476,7 @@ angular.module('angular-kaarousel')
 
     KaarouselFactory.prototype.shouldStop = function() {
       if ( this.settings.autoplay ) {
-        if ( (this.userAction && this.settings.stopAfterAction) || this.pausedByUser || this.stoppedAtEnd ) {
+        if ( (this.userAction && this.settings.stopAfterAction) || this.pausedByUser || this.stoppedAtEnd || !this.canSlide()) {
           return true;
         }
         return false;
@@ -566,6 +571,41 @@ angular.module('angular-kaarousel')
       if ( this.settings.pagerOnHover && this.settings.hidePager ) {
         this.shouldHidePager = true;
       }
+    };
+
+    KaarouselFactory.prototype.changeState = function( state ) {
+      if ( state ) { 
+        if ( !this.isEnabled ) {
+          if ( this.lastActiveIndex ) {
+            this.activeIndex = this.lastActiveIndex;
+          }
+          this.shouldHideNav = this.settings.hideNav;
+          this.shouldHidePager = this.settings.hidePager;
+          this.isEnabled = true;
+        }
+      } else {
+        if ( this.isEnabled ) {
+          if ( this.activeIndex ) {
+            this.lastActiveIndex = this.activeIndex;
+            this.activeIndex = null;
+          }
+
+          this.shouldHideNav = true;
+          this.shouldHidePager = true;
+
+          this.isEnabled = false;
+        }
+      }
+    };
+
+    KaarouselFactory.prototype.canSlide = function() {
+      var conf = this.settings, canPlay = this.elements.length > conf.displayed || conf.perSlide < conf.displayed;
+      this.changeState( canPlay );
+      return canPlay;
+    };
+
+    KaarouselFactory.prototype.computeHideNav = function() {
+      return this.shouldHideNav || !this.canSlide();
     };
 
     KaarouselFactory.prototype.bindEvents = function( remove ) {
@@ -675,7 +715,7 @@ angular.module('angular-kaarousel')
         var factory = ctrl.getFactory();
 
         scope.shouldHideNav = function () {
-          return factory.get('shouldHideNav') || factory.get('elements').length <= ctrl.getSettings().displayed;
+          return factory.computeHideNav();
         };
 
         scope.shouldHideNext = function () {

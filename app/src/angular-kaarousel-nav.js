@@ -10,7 +10,7 @@ angular.module('angular-kaarousel')
         var factory = ctrl.getFactory();
 
         scope.shouldHideNav = function () {
-          return factory.get('shouldHideNav') || factory.get('elements').length <= ctrl.getSettings().displayed;
+          return factory.computeHideNav();
         };
 
         scope.shouldHideNext = function () {

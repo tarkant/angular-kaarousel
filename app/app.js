@@ -166,7 +166,7 @@ angular.module('myApp', [
 
     $scope.options = {
 
-      displayed : 5,
+      displayed : 7,
       perSlide : 3,
       autoplay : true,
       pauseOnHover : true,
@@ -184,7 +184,6 @@ angular.module('myApp', [
 
       swipable : true,
       updateRate : 300,
-      minWidth : 300,
       expand : true,
       loop: true
 
