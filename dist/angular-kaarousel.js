@@ -322,7 +322,7 @@ angular.module('angular-kaarousel')
           confDisp = Math.abs(Math.ceil(conf.displayed)), out;
 
       if ( minWidth > 0 && this.sliderDomElement ) {
-        out = Math.floor( this.sliderDomElement.outerWidth() / minWidth ) || 1;
+        out = Math.floor( this.sliderDomElement.outerWidth() / minWidth ) || confDisp;
       }
 
       if ( !out || out > confDisp ) {
