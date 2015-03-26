@@ -9,7 +9,7 @@ angular.module('angular-kaarousel')
       link: function (scope, element, attrs, ctrl) {
 
         var swipeThreshold = 120,
-            swipeStageWidth = 200,
+            // swipeStageWidth = 200,
             factory = ctrl.getFactory();
 
         var startCoords, lastCoords;
@@ -23,9 +23,9 @@ angular.module('angular-kaarousel')
           return startCoords && lastCoords && Math.abs( startCoords.x - lastCoords.x ) > swipeThreshold;
         };
 
-        var getStrength = function () {
-          return Math.floor( Math.abs( startCoords.x - lastCoords.x ) / swipeStageWidth ) + 1;
-        };
+        // var getStrength = function () {
+        //   return Math.floor( Math.abs( startCoords.x - lastCoords.x ) / swipeStageWidth ) + 1;
+        // };
 
         ctrl.register('wrapperDomElement', element);
 
@@ -62,20 +62,24 @@ angular.module('angular-kaarousel')
             if ( !hasEnough() || !lastCoords ) { return; }
             $timeout(function () {
               var displacement = startCoords.x - lastCoords.x;
-              
+
               scope.shouldAnim = true;
               scope.dragging = false;
-              
+
               if ( shouldSwipe() ) {
                 if ( displacement > 0 ) {
                   if ( factory.get('activeIndex') < factory.get('elements').length - 1 ) {
-                    factory.move('next', true, false, getStrength());
+                    scope.shouldAnim = true;
+                    scope.dragging = false;
+                    factory.move('next', true, false);
                   } else {
                     scope.resetSwipe();
                   }
                 } else {
                   if ( factory.get('activeIndex') > 0 ) {
-                    factory.move('prev', true, false, getStrength());
+                    scope.shouldAnim = true;
+                    scope.dragging = false;
+                    factory.move('prev', true, false);
                   } else {
                     scope.resetSwipe();
                   }

@@ -31,7 +31,7 @@ angular.module('angular-kaarousel')
       require: '^kaarousel',
       link: function (scope, element, attrs, ctrl) {
         var factory = ctrl.getFactory();
-        
+
         scope.shouldHidePager = function () {
           return factory.get('shouldHidePager');
         };

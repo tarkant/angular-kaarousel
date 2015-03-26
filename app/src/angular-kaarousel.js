@@ -85,8 +85,14 @@ angular.module('angular-kaarousel', ['ngTouch'])
 
           var factory = self.getFactory();
 
+          factory.set('elements', self.elements);
+          factory.set('slides', self.slides);
+          factory.set('sizes', self.sizes);
+
           if ( factory.get('isReady') ) {
             factory.update();
+          } else {
+            self.setSettings();
           }
 
           factory.set('isReady', true);
@@ -96,9 +102,6 @@ angular.module('angular-kaarousel', ['ngTouch'])
             self.getFactory().setInterval();
           }
 
-          self.getFactory().set('elements', self.elements);
-          self.getFactory().set('slides', self.slides);
-          self.getFactory().set('sizes', self.sizes);
 
         };
 
@@ -125,7 +128,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
 
       },
       link: function (scope, element, attrs, ctrl) {
-        
+
         var watchTimeout,
             windowTimeout,
             isSyncing = false,
