@@ -85,8 +85,14 @@ angular.module('angular-kaarousel', ['ngTouch'])
 
           var factory = self.getFactory();
 
+          factory.set('elements', self.elements);
+          factory.set('slides', self.slides);
+          factory.set('sizes', self.sizes);
+
           if ( factory.get('isReady') ) {
             factory.update();
+          } else {
+            self.setSettings();
           }
 
           factory.set('isReady', true);
@@ -96,9 +102,6 @@ angular.module('angular-kaarousel', ['ngTouch'])
             self.getFactory().setInterval();
           }
 
-          self.getFactory().set('elements', self.elements);
-          self.getFactory().set('slides', self.slides);
-          self.getFactory().set('sizes', self.sizes);
 
         };
 
@@ -125,7 +128,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
 
       }],
       link: function (scope, element, attrs, ctrl) {
-        
+
         var watchTimeout,
             windowTimeout,
             isSyncing = false,
@@ -194,6 +197,7 @@ angular.module('angular-kaarousel', ['ngTouch'])
       }
     };
   }]);
+
 'use strict';
 
 angular.module('angular-kaarousel')
@@ -202,7 +206,7 @@ angular.module('angular-kaarousel')
     var _pi = function( value ) {
       return parseInt(value, 10);
     };
-    
+
     var KaarouselFactory = function () {
       var self = this;
 
@@ -321,6 +325,10 @@ angular.module('angular-kaarousel')
       var minWidth = _pi(conf.minWidth || 0),
           confDisp = Math.abs(Math.ceil(conf.displayed)), out;
 
+      if ( !this.elements.length ) {
+        return confDisp;
+      }
+
       if ( minWidth > 0 && this.sliderDomElement ) {
         out = Math.floor( this.sliderDomElement.outerWidth() / minWidth ) || confDisp;
       }
@@ -351,10 +359,10 @@ angular.module('angular-kaarousel')
       return out;
     };
 
-    KaarouselFactory.prototype.computeIndex = function(index, direction, strength) {
+    KaarouselFactory.prototype.computeIndex = function(index, direction) {
       var self = this;
       var nextIndex = index + (direction === 'next' ? self.settings.perSlide : - self.settings.perSlide);
-      
+
       this.stoppedAtEnd = false;
 
       if ( nextIndex >= self.elements.length ) {
@@ -387,7 +395,7 @@ angular.module('angular-kaarousel')
       this.shouldHidePrev = this.activeIndex < this.settings.perSlide;
     };
 
-    KaarouselFactory.prototype.move = function( where, isUserAction, preventCallback, strength ) {
+    KaarouselFactory.prototype.move = function( where, isUserAction, preventCallback ) {
       var self = this, currentslideindex = self.activeIndex;
 
       self.hasStarted = true;
@@ -397,11 +405,11 @@ angular.module('angular-kaarousel')
       if ( isUserAction && this.settings.stopAfterAction ) {
         this.userAction = true;
       }
-      
+
       switch ( where ) {
         case 'next':
         case 'prev':
-          self.activeIndex = self.computeIndex(self.activeIndex, where, strength);
+          self.activeIndex = self.computeIndex(self.activeIndex, where);
           break;
         default:
           self.activeIndex = _pi(where);
@@ -422,7 +430,7 @@ angular.module('angular-kaarousel')
           self.scope.$parent[self.settings.beforeSlide](currentslideindex, self.activeIndex);
         }
       }
-      
+
       if ( !preventCallback && self.settings.afterSlide ) {
         $timeout(function () {
           if ( typeof self.scope.$parent[self.settings.afterSlide] === 'function' ) {
@@ -502,7 +510,7 @@ angular.module('angular-kaarousel')
       this.bindEvents();
       if ( this.hasStarted ) {
         $timeout(function () {
-          self.move(self.activeIndex, false, true);          
+          self.move(self.activeIndex, false, true);
         }, 100);
       }
     };
@@ -574,7 +582,7 @@ angular.module('angular-kaarousel')
     };
 
     KaarouselFactory.prototype.changeState = function( state ) {
-      if ( state ) { 
+      if ( state ) {
         if ( !this.isEnabled ) {
           if ( this.lastActiveIndex ) {
             this.activeIndex = this.lastActiveIndex;
@@ -609,7 +617,7 @@ angular.module('angular-kaarousel')
     };
 
     KaarouselFactory.prototype.bindEvents = function( remove ) {
-      
+
       var self = this;
 
       var needEvents = this.settings.pauseOnHover || this.settings.pagerOnHover || this.settings.navOnHover;
@@ -736,7 +744,7 @@ angular.module('angular-kaarousel')
       require: '^kaarousel',
       link: function (scope, element, attrs, ctrl) {
         var factory = ctrl.getFactory();
-        
+
         scope.shouldHidePager = function () {
           return factory.get('shouldHidePager');
         };
@@ -744,6 +752,7 @@ angular.module('angular-kaarousel')
       }
     };
   });
+
 'use strict';
 
 angular.module('angular-kaarousel')
@@ -755,7 +764,7 @@ angular.module('angular-kaarousel')
       link: function (scope, element, attrs, ctrl) {
 
         var swipeThreshold = 120,
-            swipeStageWidth = 200,
+            // swipeStageWidth = 200,
             factory = ctrl.getFactory();
 
         var startCoords, lastCoords;
@@ -769,9 +778,9 @@ angular.module('angular-kaarousel')
           return startCoords && lastCoords && Math.abs( startCoords.x - lastCoords.x ) > swipeThreshold;
         };
 
-        var getStrength = function () {
-          return Math.floor( Math.abs( startCoords.x - lastCoords.x ) / swipeStageWidth ) + 1;
-        };
+        // var getStrength = function () {
+        //   return Math.floor( Math.abs( startCoords.x - lastCoords.x ) / swipeStageWidth ) + 1;
+        // };
 
         ctrl.register('wrapperDomElement', element);
 
@@ -808,20 +817,24 @@ angular.module('angular-kaarousel')
             if ( !hasEnough() || !lastCoords ) { return; }
             $timeout(function () {
               var displacement = startCoords.x - lastCoords.x;
-              
+
               scope.shouldAnim = true;
               scope.dragging = false;
-              
+
               if ( shouldSwipe() ) {
                 if ( displacement > 0 ) {
                   if ( factory.get('activeIndex') < factory.get('elements').length - 1 ) {
-                    factory.move('next', true, false, getStrength());
+                    scope.shouldAnim = true;
+                    scope.dragging = false;
+                    factory.move('next', true, false);
                   } else {
                     scope.resetSwipe();
                   }
                 } else {
                   if ( factory.get('activeIndex') > 0 ) {
-                    factory.move('prev', true, false, getStrength());
+                    scope.shouldAnim = true;
+                    scope.dragging = false;
+                    factory.move('prev', true, false);
                   } else {
                     scope.resetSwipe();
                   }
@@ -867,6 +880,7 @@ angular.module('angular-kaarousel')
       }
     };
   }]);
+
 (function(module) {
 try {
   module = angular.module('angular-kaarousel');
