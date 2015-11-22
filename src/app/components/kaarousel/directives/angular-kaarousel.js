@@ -274,6 +274,9 @@
             if (options.minWidth) {
                 var sliderWidth = vm.kaarouselSliderContainer.offsetWidth;
                 options.displayed = Math.floor(sliderWidth / options.minWidth);
+                if (options.displayed < 1) {
+                    options.displayed = 1;
+                }
             }
             if (!options.perSlide || options.perSlide > options.displayed) {
                 options.perSlide = options.displayed;
@@ -361,11 +364,15 @@
 
             // Watch changes in the options
             _.forEach($attrs, function(attribute, attributeName) {
+                var debounce;
                 if (vm.defaultOptions.hasOwnProperty(attributeName)) {
                     $scope.$watch(attributeName, function(nv, ov) {
-                        if (nv !== ov) {
-                            setOptions(attributeName, nv);
-                        }
+                        $timeout.cancel(debounce);
+                        debounce = $timeout(function () {
+                            if (nv !== ov) {
+                                setOptions(attributeName, nv);
+                            }
+                        }, 150);
                     });
                 }
             });

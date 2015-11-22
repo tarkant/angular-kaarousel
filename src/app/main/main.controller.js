@@ -122,7 +122,7 @@
             expand: true,
             loop: true,
             direction: 'horizontal',
-            minWidth: 300,
+            minWidth: null,
 
             beforeSlide: function () {
                 $log.log('before slide callback');
