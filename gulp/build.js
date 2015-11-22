@@ -1,139 +1,98 @@
 'use strict';
 
+var path = require('path');
 var gulp = require('gulp');
+var conf = require('./conf');
 
 var $ = require('gulp-load-plugins')({
-  pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license']
-});
-
-gulp.task('styles', function () {
-  return gulp.src('app/styles/*.less')
-    .pipe($.plumber())
-    .pipe($.less())
-    .pipe($.autoprefixer('last 1 version'))
-    .pipe(gulp.dest('.tmp/styles'))
-    .pipe($.size());
-});
-
-gulp.task('scripts', function () {
-  return gulp.src([
-      'app/scripts/**/*.js',
-      'app/src/*.js'
-    ])
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.size());
+  pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license', 'del']
 });
 
 gulp.task('partials', function () {
-  return gulp.src('app/partials/**/*.html')
+  return gulp.src([
+    path.join(conf.paths.src, '/app/**/*.html'),
+    path.join(conf.paths.tmp, '/serve/app/**/*.html')
+  ])
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
       quotes: true
     }))
-    .pipe($.ngHtml2js({
-      moduleName: 'angular-kaarousel',
-      prefix: 'partials/'
+    .pipe($.angularTemplatecache('templateCacheHtml.js', {
+      module: 'angularKaarousel',
+      root: 'app'
     }))
-    .pipe(gulp.dest('.tmp/partials'))
-    .pipe($.size());
+    .pipe(gulp.dest(conf.paths.tmp + '/partials/'));
 });
 
-gulp.task('html', ['styles', 'scripts', 'partials'], function () {
-  var jsFilter = $.filter('**/*.js');
-  var cssFilter = $.filter('**/*.css');
+gulp.task('html', ['inject', 'partials'], function () {
+  var partialsInjectFile = gulp.src(path.join(conf.paths.tmp, '/partials/templateCacheHtml.js'), { read: false });
+  var partialsInjectOptions = {
+    starttag: '<!-- inject:partials -->',
+    ignorePath: path.join(conf.paths.tmp, '/partials'),
+    addRootSlash: false
+  };
 
-  return gulp.src('app/*.html')
-    .pipe($.inject(gulp.src('.tmp/partials/**/*.js'), {
-      read: false,
-      starttag: '<!-- inject:partials -->',
-      addRootSlash: false,
-      addPrefix: '../'
-    }))
-    .pipe($.useref.assets())
+  var htmlFilter = $.filter('*.html', { restore: true });
+  var jsFilter = $.filter('**/*.js', { restore: true });
+  var cssFilter = $.filter('**/*.css', { restore: true });
+  var assets;
+
+  return gulp.src(path.join(conf.paths.tmp, '/serve/*.html'))
+    .pipe($.inject(partialsInjectFile, partialsInjectOptions))
+    .pipe(assets = $.useref.assets())
     .pipe($.rev())
     .pipe(jsFilter)
+    .pipe($.sourcemaps.init())
     .pipe($.ngAnnotate())
-    .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
-    .pipe(jsFilter.restore())
+    .pipe($.uglify({ preserveComments: $.uglifySaveLicense })).on('error', conf.errorHandler('Uglify'))
+    .pipe($.sourcemaps.write('maps'))
+    .pipe(jsFilter.restore)
     .pipe(cssFilter)
-    .pipe($.replace('bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap','fonts'))
-    .pipe($.csso())
-    .pipe(cssFilter.restore())
-    .pipe($.useref.restore())
+    .pipe($.sourcemaps.init())
+    .pipe($.replace('../../bower_components/material-design-iconfont/iconfont/', '../fonts/'))
+    .pipe($.minifyCss({ processImport: false }))
+    .pipe($.sourcemaps.write('maps'))
+    .pipe(cssFilter.restore)
+    .pipe(assets.restore())
     .pipe($.useref())
     .pipe($.revReplace())
-    .pipe(gulp.dest('dist'))
-    .pipe($.size());
-});
+    .pipe(htmlFilter)
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true,
+      conditionals: true
+    }))
+    .pipe(htmlFilter.restore)
+    .pipe(gulp.dest(path.join(conf.paths.dist, '/')))
+    .pipe($.size({ title: path.join(conf.paths.dist, '/'), showFiles: true }));
+  });
 
-gulp.task('images', function () {
-  return gulp.src('app/images/**/*')
-    .pipe($.cache($.imagemin({
-      optimizationLevel: 3,
-      progressive: true,
-      interlaced: true
-    })))
-    .pipe(gulp.dest('dist/images'))
-    .pipe($.size());
-});
-
+// Only applies for fonts from bower dependencies
+// Custom fonts are handled by the "other" task
 gulp.task('fonts', function () {
-  return gulp.src($.mainBowerFiles())
-    .pipe($.filter('**/*.{eot,svg,ttf,woff}'))
+  return gulp.src($.mainBowerFiles().concat('bower_components/material-design-iconfont/iconfont/*'))
+    .pipe($.filter('**/*.{eot,svg,ttf,woff,woff2}'))
     .pipe($.flatten())
-    .pipe(gulp.dest('dist/fonts'))
-    .pipe($.size());
+    .pipe(gulp.dest(path.join(conf.paths.dist, '/fonts/')));
+});
+
+gulp.task('other', function () {
+  var fileFilter = $.filter(function (file) {
+    return file.stat.isFile();
+  });
+
+  return gulp.src([
+    path.join(conf.paths.src, '/**/*'),
+    path.join('!' + conf.paths.src, '/**/*.{html,css,js,scss}')
+  ])
+    .pipe(fileFilter)
+    .pipe(gulp.dest(path.join(conf.paths.dist, '/')));
 });
 
 gulp.task('clean', function () {
-  return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
+  return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/')]);
 });
 
-// gulp.task('build', ['html', 'partials', 'images', 'fonts']);
-
-gulp.task('jsify', ['clean'], function () {
-  return gulp.src('app/src/*.html')
-    .pipe($.minifyHtml({
-      empty: true,
-      spare: true,
-      quotes: true
-    }))
-    .pipe($.ngHtml2js({
-      prefix: 'src/',
-      moduleName: 'angular-kaarousel',
-    }))
-    .pipe(gulp.dest('app/src/template'))
-    .pipe($.size());
-});
-
-gulp.task('doDist', ['jsify'], function () {
-
-  gulp.src('app/src/*.less')
-    .pipe($.plumber())
-    .pipe($.less())
-    .pipe($.autoprefixer('last 2 version'))
-    .pipe($.csso())
-    .pipe(gulp.dest('dist'))
-    .pipe($.size());
-
-  return gulp.src('app/src/**/*.js')
-    .pipe($.ngAnnotate())
-    .pipe($.order([
-      'angular-kaarousel.js',
-      'app/src/*.js'
-    ]))
-    .pipe($.print())
-    .pipe($.concat('angular-kaarousel.js'))
-    .pipe(gulp.dest('dist'))
-    .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
-    .pipe($.rename({
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('dist'))
-    .pipe($.size());
-    
-});
-
-gulp.task('build', ['doTheDistYall']);
+gulp.task('build', ['html', 'fonts', 'other']);
