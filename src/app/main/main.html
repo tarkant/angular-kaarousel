@@ -1,0 +1,189 @@
+<md-sidenav
+    layout="column"
+    class="md-sidenav-left md-whiteframe-4dp"
+    md-component-id="left"
+    md-is-locked-open="$mdMedia('gt-sm')">
+
+    <!-- SIDENAV TOOLBAR -->
+    <md-toolbar class="md-menu-toolbar">
+        <div class="md-toolbar-tools">
+            <span>Settings</span>
+            <span flex></span>
+            <md-button class="md-icon-button">
+                <md-icon>settings</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-divider></md-divider>
+
+    <!-- SIDENAV OPTIONS -->
+    <md-list>
+        <md-list-item>
+            <md-input-container flex>
+                <label>Displayed elements</label>
+                <input type="number" ng-model="main.options.displayed">
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <md-input-container flex>
+                <label>Per slide</label>
+                <input type="number" max="{{main.options.displayed}}" ng-model="main.options.perSlide">
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <md-input-container flex>
+                <label>Time interval</label>
+                <input type="number" ng-model="main.options.timeInterval">
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <md-input-container flex>
+                <label>Transition duration</label>
+                <input type="number" ng-model="main.options.transitionDuration">
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <md-input-container flex>
+                <label>Min slide width</label>
+                <input type="number" ng-model="main.options.minWidth">
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <md-input-container flex>
+                <md-select ng-model="main.options.direction" aria-label="direction">
+                    <md-option ng-value="direction.name" ng-repeat="direction in main.directions">{{ direction.name }}</md-option>
+                </md-select>
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Autoplay</span>
+            <md-switch aria-label="Autoplay" ng-model="main.options.autoplay"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Loop</span>
+            <md-switch aria-label="Loop" ng-model="main.options.loop"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Expand slides</span>
+            <md-switch aria-label="Expand slides" ng-model="main.options.expand"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Pause on hover</span>
+            <md-switch aria-label="Pause on hover" ng-model="main.options.pauseOnHover"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Center active slide</span>
+            <md-switch aria-label="Center active slide" ng-model="main.options.centerActive"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Stop when interacted</span>
+            <md-switch aria-label="Stop when interacted" ng-model="main.options.stopAfterAction"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Hide prev/next</span>
+            <md-switch aria-label="Hide prev/next" ng-model="main.options.hideNav"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Show prev/next on hover</span>
+            <md-switch ng-disabled="!main.options.hideNav" aria-label="Show prev/next on hover" ng-model="main.options.navOnHover"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Hide pagination</span>
+            <md-switch aria-label="Hide pagination" ng-model="main.options.hidePager"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Show pagination on hover</span>
+            <md-switch ng-disabled="!main.options.hidePager" aria-label="Show pagination on hover" ng-model="main.options.pagerOnHover"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <span flex>Swipable</span>
+            <md-switch aria-label="Swipable" ng-model="main.options.swipable"></md-switch>
+        </md-list-item>
+        <md-list-item>
+            <md-input-container flex>
+                <label>Sync with a value</label>
+                <input type="number" ng-model="main.options.sync">
+            </md-input-container>
+        </md-list-item>
+    </md-list>
+
+</md-sidenav>
+
+<div layout="column" id="content" flex>
+
+    <md-toolbar class="md-tall md-whiteframe-z2">
+        <div class="md-toolbar-tools">
+            <span flex></span>
+            <md-button class="md-icon-button">
+                <md-icon>search</md-icon>
+            </md-button>
+            <md-button class="md-icon-button">
+                <md-icon>favorite</md-icon>
+            </md-button>
+            <md-button class="md-icon-button">
+                <md-icon>more_vert</md-icon>
+            </md-button>
+        </div>
+        <div class="md-toolbar-tools md-toolbar-tools-bottom">
+            <span>Angular Kaarousel</span>
+        </div>
+    </md-toolbar>
+
+    <md-content flex class="md-padding">
+        <div ng-cloak
+            kaarousel
+            displayed="main.options.displayed"
+            per-slide="main.options.perSlide"
+            autoplay="main.options.autoplay"
+            direction="main.options.direction"
+            pause-on-hover="main.options.pauseOnHover"
+            center-active="main.options.centerActive"
+            time-interval="main.options.timeInterval"
+            stop-after-action="main.options.stopAfterAction"
+            hide-nav="main.options.hideNav"
+            hide-pager="main.options.hidePager"
+            nav-on-hover="main.options.navOnHover"
+            pager-on-hover="main.options.pagerOnHover"
+            swipable="main.options.swipable"
+            sync="main.options.sync"
+            loop="main.options.loop"
+            min-width="main.options.minWidth"
+            expand="main.options.expand"
+            transition-duration="main.options.transitionDuration"
+            before-slide="main.options.beforeSlide"
+            after-slide="main.options.afterSlide">
+            <div
+                kaarousel-slide
+                ng-if="!$first || ($first && !main.hideFirst)"
+                ng-repeat="slide in ::main.data | orderBy:'rank' track by $index">
+                <!-- Slide content -->
+                <md-card class="thumbnail">
+                    <md-toolbar>
+                        <div class="md-toolbar-tools">
+                            <h3>{{slide.title}}</h3>
+                            <span flex></span>
+                            <md-button class="md-icon-button">
+                                <md-icon>favorite</md-icon>
+                            </md-button>
+                        </div>
+                    </md-toolbar>
+                    <md-card-content class="caption">
+                        <p>{{slide.description}}</p>
+                    </md-card-content>
+                    <md-card-actions layout="row" layout-align="end center">
+                        <md-button target="_blank" ng-href="{{slide.url}}">
+                            Go to site
+                        </md-button>
+                    </md-card-actions>
+                </md-card>
+            </div>
+        </div>
+
+        <div layout="row" layout-align="end center">
+            <md-button class="md-primary md-raised" ng-click="main.hideFirstSlide()">Hide first slide</md-button>
+        </div>
+
+    </md-content>
+
+</div>
