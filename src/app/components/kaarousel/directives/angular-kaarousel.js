@@ -202,7 +202,7 @@
             if (option === 'centerActive') {
                 move(vm.currentIndex, false, true);
             }
-            if (option === 'minWidth' && value) {
+            if (option === 'minWidth') {
                 setSlidesDimensions();
             }
         }
