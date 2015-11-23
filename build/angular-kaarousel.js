@@ -49,6 +49,19 @@
     function KaarouselController($scope, $element, $attrs, $interval, $window, $timeout, $swipe) {
 
         var vm = this;
+        var booleanAttributes = [
+            'autoplay',
+            'pauseOnHover',
+            'centerActive',
+            'stopAfterAction',
+            'hideNav',
+            'hidePager',
+            'navOnHover',
+            'pagerOnHover',
+            'swipable',
+            'loop',
+            'expand'
+        ];
 
         vm.init = init;
         vm.register = register;
@@ -116,10 +129,17 @@
         }
 
         function getScopeOptions() {
+            var options;
             if (!_.isEmpty($scope.options)) {
-                return $scope.options;
+                options = angular.copy($scope.options);
+
+                // Add callbacks
+                options.afterSlide = $scope.afterSlide;
+                options.beforeSlide = $scope.beforeSlide;
+
+                return options;
             }
-            var options = {
+            options = {
                 displayed: $scope.displayed,
                 perSlide: $scope.perSlide,
                 autoplay: $scope.autoplay,
@@ -155,10 +175,9 @@
          * @param  {Object} options Options to check
          * @return {Object}         return back the options
          */
-        function assumeBoolean (options) {
-
-            _.forEach(options, function (option, optionName) {
-                if($attrs.hasOwnProperty(optionName) && angular.isUndefined(option)) {
+        function assumeBoolean(options) {
+            _.forEach(options, function(option, optionName) {
+                if (booleanAttributes.indexOf(optionName) !== -1 && $attrs.hasOwnProperty(optionName) && angular.isUndefined(option)) {
                     options[optionName] = true;
                 }
             });
@@ -368,7 +387,7 @@
                 if (vm.defaultOptions.hasOwnProperty(attributeName)) {
                     $scope.$watch(attributeName, function(nv, ov) {
                         $timeout.cancel(debounce);
-                        debounce = $timeout(function () {
+                        debounce = $timeout(function() {
                             if (nv !== ov) {
                                 setOptions(attributeName, nv);
                             }
@@ -526,7 +545,7 @@
             return index;
         }
 
-        function movePage (index) {
+        function movePage(index) {
             move(index * vm.options.perSlide, true);
         }
 
@@ -552,7 +571,7 @@
                 index = ref < limits.down ? 0 : ref;
             }
 
-            if( ref >= limits.down ) {
+            if (ref >= limits.down) {
                 index = ref < limits.up ? ref : vm.slides.length - vm.options.displayed;
             }
 
@@ -675,20 +694,35 @@
             }
         }
 
+        /**
+         * Determine if there's enough to swipe
+         * @return {Boolean}
+         */
         function canSwipe() {
             return vm.options.swipable && vm.slides.length > vm.options.displayed;
         }
 
+        /**
+         * Add the transition duration property to the slider
+         */
         function setTransition() {
             vm.state.animating = true;
             angular.element(vm.kaarouselSlider).css('transition-duration', vm.options.transitionDuration / 1000 + 's');
         }
 
+        /**
+         * Remove the transition duration property to the slider
+         */
         function removeTransition() {
             vm.state.animating = false;
             angular.element(vm.kaarouselSlider).css('transition-duration', '');
         }
 
+        /**
+         * Add the swipe shift to current view
+         * @param {Object} initial initial position
+         * @param {Object} shift   current position
+         */
         function addShift(initial, shift) {
             vm.kaarouselSliderContainer.classList.add('dragging');
 
@@ -701,6 +735,9 @@
             applyStyles(offset);
         }
 
+        /**
+         * Remove all things related to the draggnig state
+         */
         function removeShift() {
             vm.kaarouselSliderContainer.classList.remove('dragging');
 
@@ -709,11 +746,22 @@
             setTransition();
         }
 
+        /**
+         * Determine if the shift is big enough to swipe
+         * @param  {Object} startCoords start position
+         * @param  {Object} lastCoords  last position
+         * @return {Boolean}
+         */
         function shouldSwipe(startCoords, lastCoords) {
             var property = vm.options.direction === 'horizontal' ? 'x' : 'y';
             return startCoords && lastCoords && Math.abs(startCoords[property] - lastCoords[property]) > vm.options.swipeThreshold;
         }
 
+        /**
+         * Add the swipe listener to the slider
+         * toggle vm.state.swipable
+         * @param  {Boolean} bind whether or not to bind
+         */
         function swipeHandler(bind) {
             vm.state.swipable = bind;
 
@@ -741,11 +789,11 @@
                 },
                 end: function() {
 
+                    removeShift();
+
                     if (!canSwipe() || !lastCoords) {
                         return;
                     }
-
-                    removeShift();
 
                     var displacement = startCoords.x - lastCoords.x;
 
