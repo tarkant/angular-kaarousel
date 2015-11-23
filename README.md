@@ -1,9 +1,10 @@
 # Angular Kaarousel
+
+Full angularJS carousel
+
+[DEMO](http://corentin-gautier.github.io/angular-kaarousel/)
+
 =================
-
-angularJS carousel
-
-DEMO: http://corentin-gautier.github.io/angular-kaarousel/
 
 ## How to use it
 
@@ -79,5 +80,6 @@ Default configuration is :
 ```
 
 ## Todo
-    - Fade animation
-    - restrict assuming true to boolean attributes
+
+- Fade animation
+- restrict assuming true to boolean attributes
