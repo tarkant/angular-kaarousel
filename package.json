@@ -1,6 +1,7 @@
 {
   "name": "angular-kaarousel",
   "version": "2.0.0",
+  "description": "Full AngularJS carousel",
   "dependencies": {},
   "scripts": {
     "test": "gulp test"
