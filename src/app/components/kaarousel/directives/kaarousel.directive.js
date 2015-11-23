@@ -49,6 +49,19 @@
     function KaarouselController($scope, $element, $attrs, $interval, $window, $timeout, $swipe) {
 
         var vm = this;
+        var booleanAttributes = [
+            'autoplay',
+            'pauseOnHover',
+            'centerActive',
+            'stopAfterAction',
+            'hideNav',
+            'hidePager',
+            'navOnHover',
+            'pagerOnHover',
+            'swipable',
+            'loop',
+            'expand'
+        ];
 
         vm.init = init;
         vm.register = register;
@@ -116,10 +129,17 @@
         }
 
         function getScopeOptions() {
+            var options;
             if (!_.isEmpty($scope.options)) {
-                return $scope.options;
+                options = angular.copy($scope.options);
+
+                // Add callbacks
+                options.afterSlide = $scope.afterSlide;
+                options.beforeSlide = $scope.beforeSlide;
+
+                return options;
             }
-            var options = {
+            options = {
                 displayed: $scope.displayed,
                 perSlide: $scope.perSlide,
                 autoplay: $scope.autoplay,
@@ -155,10 +175,9 @@
          * @param  {Object} options Options to check
          * @return {Object}         return back the options
          */
-        function assumeBoolean (options) {
-
-            _.forEach(options, function (option, optionName) {
-                if($attrs.hasOwnProperty(optionName) && angular.isUndefined(option)) {
+        function assumeBoolean(options) {
+            _.forEach(options, function(option, optionName) {
+                if (booleanAttributes.indexOf(optionName) !== -1 && $attrs.hasOwnProperty(optionName) && angular.isUndefined(option)) {
                     options[optionName] = true;
                 }
             });
@@ -368,7 +387,7 @@
                 if (vm.defaultOptions.hasOwnProperty(attributeName)) {
                     $scope.$watch(attributeName, function(nv, ov) {
                         $timeout.cancel(debounce);
-                        debounce = $timeout(function () {
+                        debounce = $timeout(function() {
                             if (nv !== ov) {
                                 setOptions(attributeName, nv);
                             }
@@ -526,7 +545,7 @@
             return index;
         }
 
-        function movePage (index) {
+        function movePage(index) {
             move(index * vm.options.perSlide, true);
         }
 
@@ -552,7 +571,7 @@
                 index = ref < limits.down ? 0 : ref;
             }
 
-            if( ref >= limits.down ) {
+            if (ref >= limits.down) {
                 index = ref < limits.up ? ref : vm.slides.length - vm.options.displayed;
             }
 

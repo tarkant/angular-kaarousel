@@ -36,10 +36,10 @@ Full angularJS carousel
     </kaarousel>
 ```
 
-Or you can just pass an option object ( options takes over everything else though ) :
+Or you can just pass an option object ( options takes over everything else though and callbacks should always be in attributes ) :
 
 ```html
-    <kaarousel options="myOptions" ></kaarousel>
+    <kaarousel options="myOptions" before-slide="someFunction" ></kaarousel>
 ```
 
 Every boolean attributes are assumed true when empty:
@@ -82,4 +82,3 @@ Default configuration is :
 ## Todo
 
 - Fade animation
-- restrict assuming true to boolean attributes
