@@ -83,3 +83,4 @@ Default configuration is :
 
 - Fade animation
 - add code sample to online doc
+- add tests
