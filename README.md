@@ -82,3 +82,5 @@ Default configuration is :
 ## Todo
 
 - Fade animation
+- add code sample to online doc
+- add tests

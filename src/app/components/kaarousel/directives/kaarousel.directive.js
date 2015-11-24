@@ -768,20 +768,35 @@
             }
         }
 
+        /**
+         * Determine if there's enough to swipe
+         * @return {Boolean}
+         */
         function canSwipe() {
             return vm.options.swipable && vm.slides.length > vm.options.displayed;
         }
 
+        /**
+         * Add the transition duration property to the slider
+         */
         function setTransition() {
             vm.state.animating = true;
             angular.element(vm.kaarouselSlider).css('transition-duration', vm.options.transitionDuration / 1000 + 's');
         }
 
+        /**
+         * Remove the transition duration property to the slider
+         */
         function removeTransition() {
             vm.state.animating = false;
             angular.element(vm.kaarouselSlider).css('transition-duration', '');
         }
 
+        /**
+         * Add the swipe shift to current view
+         * @param {Object} initial initial position
+         * @param {Object} shift   current position
+         */
         function addShift(initial, shift) {
             vm.kaarouselSliderContainer.classList.add('dragging');
 
@@ -794,6 +809,9 @@
             applyStyles(offset);
         }
 
+        /**
+         * Remove all things related to the draggnig state
+         */
         function removeShift() {
             vm.kaarouselSliderContainer.classList.remove('dragging');
 
@@ -802,11 +820,22 @@
             setTransition();
         }
 
+        /**
+         * Determine if the shift is big enough to swipe
+         * @param  {Object} startCoords start position
+         * @param  {Object} lastCoords  last position
+         * @return {Boolean}
+         */
         function shouldSwipe(startCoords, lastCoords) {
             var property = vm.options.direction === 'horizontal' ? 'x' : 'y';
             return startCoords && lastCoords && Math.abs(startCoords[property] - lastCoords[property]) > vm.options.swipeThreshold;
         }
 
+        /**
+         * Add the swipe listener to the slider
+         * toggle vm.state.swipable
+         * @param  {Boolean} bind whether or not to bind
+         */
         function swipeHandler(bind) {
             vm.state.swipable = bind;
 
@@ -834,11 +863,11 @@
                 },
                 end: function() {
 
+                    removeShift();
+
                     if (!canSwipe() || !lastCoords) {
                         return;
                     }
-
-                    removeShift();
 
                     var displacement = startCoords.x - lastCoords.x;
 
