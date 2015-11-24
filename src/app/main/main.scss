@@ -4,53 +4,70 @@ kaarousel kaarousel-nav kaarousel-next:after,
 [kaarousel] kaarousel-nav kaarousel-next:after {
     font-family: serif;
 }
+body {
 
-kaarousel, [kaarousel] {
-    kaarousel-slider {
-        .kaarousel-slide {
-            &.active {
-                md-toolbar {
-                    background: #E82C2C;
+    kaarousel, [kaarousel] {
+        kaarousel-slider {
+            .kaarousel-slide {
+                &.active {
+                    md-toolbar {
+                        background: #E82C2C;
+                    }
                 }
-            }
-            &.visible {
-                md-card {
-                    // outline:1px solid #FFB400;
-                    // box-shadow: 0px 5px 22px rgba(0, 0, 0, .14);
+                &.visible {
+                    md-card {
+                        // outline:1px solid #FFB400;
+                        // box-shadow: 0px 5px 22px rgba(0, 0, 0, .14);
+                    }
                 }
             }
         }
     }
-}
-kaarousel.direction-horizontal, [kaarousel].direction-horizontal {
-    kaarousel-slider {
-        .kaarousel-slide {
-            vertical-align: middle;
+    kaarousel.direction-horizontal, [kaarousel].direction-horizontal {
+        kaarousel-slider {
+            .kaarousel-slide {
+                vertical-align: middle;
 
+            }
         }
     }
-}
-kaarousel.direction-vertical, [kaarousel].direction-vertical {
-    width: 250px;
-    height: 400px;
+    kaarousel.direction-vertical, [kaarousel].direction-vertical {
+        width: 250px;
+        height: 400px;
 
-    kaarousel-slider .kaarousel-slide, kaarousel-slider .kaarousel-slide {
-        overflow: hidden;
-    }
+        kaarousel-slider .kaarousel-slide, kaarousel-slider .kaarousel-slide {
+            overflow: hidden;
+        }
 
-    md-card {
-        margin: 0;
-        height: 100%;
-
-        md-toolbar {
-            margin: 5px 0;
+        md-card {
+            margin: 0;
             height: 100%;
-        }
 
-        md-card-content,
-        md-card-actions {
-            display: none;
+            md-toolbar {
+                margin: 5px 0;
+                height: 100%;
+            }
+
+            md-card-content,
+            md-card-actions {
+                display: none;
+            }
+        }
+    }
+
+    .kaarousel kaarousel-slider.fade-animation > .kaarousel-slide {
+        transform: scale(.8);
+        transition: opacity, visibility, transform;
+        transition-timing-function: ease;
+
+        &.visible {
+            transform: scale(1);
         }
     }
 }
 
+code {
+    padding: 16px;
+    background: #EEE;
+    display: block;
+}

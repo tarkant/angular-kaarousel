@@ -57,6 +57,13 @@
             </md-input-container>
         </md-list-item>
         <md-list-item>
+            <md-input-container flex>
+                <md-select ng-model="main.options.animation" aria-label="animation">
+                    <md-option ng-value="animation.name" ng-repeat="animation in main.animations">{{ animation.name }}</md-option>
+                </md-select>
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
             <span flex>Autoplay</span>
             <md-switch aria-label="Autoplay" ng-model="main.options.autoplay"></md-switch>
         </md-list-item>
@@ -131,11 +138,39 @@
     </md-toolbar>
 
     <md-content flex class="md-padding">
+
+        <code>
+            &lt;kaarousel <br >
+            &nbsp;&nbsp;&nbsp;&nbsp;displayed="{{main.options.displayed}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;per-slide="{{main.options.perSlide}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;animation="{{main.options.animation}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;direction="{{main.options.direction}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;time-interval="{{main.options.timeInterval}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;transition-duration="{{main.options.transitionDuration}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;min-width="{{main.options.minWidth}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;autoplay{{main.options.autoplay ? '="' + main.options.autoplay + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;loop{{main.options.loop ? '="' + main.options.loop + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;pause-on-hover{{main.options.pauseOnHover ? '="' + main.options.pauseOnHover + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;center-active{{main.options.centerActive ? '="' + main.options.centerActive + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;stop-after-action{{main.options.stopAfterAction ? '="' + main.options.stopAfterAction + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;hide-nav{{main.options.hideNav ? '="' + main.options.hideNav + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;nav-on-hover{{main.options.navOnHover ? '="' + main.options.navOnHover + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;hide-pager{{main.options.hidePager ? '="' + main.options.hidePager + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;pager-on-hover{{main.options.pagerOnHover ? '="' + main.options.pagerOnHover + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;swipable{{main.options.swipable ? '="' + main.options.swipable + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;expand{{main.options.expand ? '="' + main.options.expand + '"' : ''}}<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;sync="{{main.options.sync}}"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;before-slide="function"<br >
+            &nbsp;&nbsp;&nbsp;&nbsp;after-slide="function"<br >
+            &gt;
+        </code>
+
         <div ng-cloak
             kaarousel
             displayed="main.options.displayed"
             per-slide="main.options.perSlide"
             autoplay="main.options.autoplay"
+            animation="main.options.animation"
             direction="main.options.direction"
             pause-on-hover="main.options.pauseOnHover"
             center-active="main.options.centerActive"

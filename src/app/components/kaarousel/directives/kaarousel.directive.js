@@ -48,6 +48,8 @@
     /** @ngInject */
     function KaarouselController($scope, $element, $attrs, $interval, $window, $timeout, $swipe) {
 
+        // @todo some settings don't work ( mainly when center active )
+
         var vm = this;
         var booleanAttributes = [
             'autoplay',
@@ -63,14 +65,16 @@
             'expand'
         ];
 
+        var animations = ['slide', 'fade'];
+
         vm.init = init;
         vm.register = register;
         vm.removeSlide = removeSlide;
-        vm.getPages = getPages;
         vm.move = move;
         vm.play = play;
         vm.stop = stop;
         vm.movePage = movePage;
+        vm.getPages = getPages;
 
         vm.defaultOptions = {
             displayed: 3,
@@ -111,14 +115,17 @@
             vm.ready = true;
         }
 
-        function getPages() {
-            if (vm.slides && vm.options && vm.options.perSlide) {
-                return new Array(Math.ceil(vm.slides.length / vm.options.perSlide));
-            }
+        function getPages () {
+            if (!vm.slides) return;
+            return new Array(Math.ceil(vm.slides.length / vm.options.perSlide));
         }
 
         function setElements() {
             vm.kaarousel = $element[0];
+            vm.kaarousel.classList.add('kaarousel');
+
+            //////////////////////
+
             vm.kaarouselSliderContainer = $element[0].querySelector('kaarousel-slider-container');
             vm.kaarouselWrapper = $element[0].querySelector('kaarousel-wrapper');
             vm.kaarouselSlider = $element[0].querySelector('kaarousel-slider');
@@ -185,6 +192,20 @@
             return options;
         }
 
+        function setAnimationClass (value) {
+            _.forEach(animations, function (name) {
+                vm.kaarouselSlider.classList.remove(name + '-animation');
+            });
+
+            vm.kaarouselSlider.classList.add(value + '-animation');
+
+            _.forEach(vm.slides, function (slide) {
+                slide.element.css({
+                    'transition-duration': value === 'slide' ? '' : vm.options.transitionDuration / 1000 + 's'
+                });
+            });
+        }
+
         /**
          * Custom actions to do when particular settings are changing
          * @param  {String} option the setting
@@ -192,36 +213,39 @@
          */
         function handleImportantChanges(option, value) {
             var fn;
-            // Recalculate sizes
-            if ((option === 'displayed' || option === 'expand') && !angular.isNumber(vm.options.minWidth)) {
-                setSlidesDimensions();
+
+            switch(option) {
+                case 'animation':
+                    setAnimationClass(value);
+                    break;
+                case 'direction':
+                    setSliderDirection();
+                    break;
+                case 'autoplay':
+                    fn = value ? 'play' : 'stop';
+                    vm[fn]();
+                    break;
+                case 'swipable':
+                    swipeHandler(value);
+                    break;
+                case 'loop':
+                    if (value && !vm.isPlaying && vm.options.autoplay) play();
+                    break;
+                case 'transitionDuration':
+                    setTransition();
+                    break;
+                case 'sync':
+                    handleSync(value);
+                    break;
+                case 'centerActive':
+                    move(vm.currentIndex, false, true);
+                    break;
+                case 'minWidth':
+                    setSlidesDimensions();
+                    break;
             }
-            // Setting classes for the direction & recalculating sizes
-            if (option === 'direction') {
-                setSliderDirection();
-            }
-            // Play or stop according to autoplay
-            if (option === 'autoplay') {
-                fn = value ? 'play' : 'stop';
-                vm[fn]();
-            }
-            if (option === 'swipable') {
-                swipeHandler(value);
-            }
-            // Relaunch when switching back to loop
-            if (option === 'loop' && value && !vm.isPlaying && vm.options.autoplay) {
-                play();
-            }
-            if (option === 'transitionDuration') {
-                setTransition();
-            }
-            if (option === 'sync') {
-                handleSync(value);
-            }
-            if (option === 'centerActive') {
-                move(vm.currentIndex, false, true);
-            }
-            if (option === 'minWidth') {
+
+            if ((option === 'displayed' || option === 'expand' || option === 'animation') && !angular.isNumber(vm.options.minWidth)) {
                 setSlidesDimensions();
             }
         }
@@ -269,6 +293,7 @@
         function setOptions(option, value) {
             vm.options = _.merge({}, vm.defaultOptions, checkValues(getScopeOptions()));
 
+
             if (option) {
                 vm.options[option] = value;
                 vm.options = checkValues(vm.options);
@@ -303,27 +328,35 @@
             if (options.expand && vm.slides.length < options.displayed) {
                 options.displayed = vm.slides.length;
             }
+            if (options.animation === animations[1] && options.perSlide !== options.displayed) {
+                options.perSlide = options.displayed;
+            }
             return options;
+        }
+
+        function setItemDimensions (item, index) {
+            var dimension = 100 / vm.options.displayed,
+                modulo = index % vm.options.displayed;
+
+            item.element.css(vm.isHorizontal ? 'height' : 'width', '');
+            item.element.css(vm.isHorizontal ? 'width' : 'height', dimension + '%');
+
+            item.element.css(vm.isHorizontal ? 'top' : 'left', '');
+            item.element.css(vm.isHorizontal ? 'left' : 'top', vm.options.animation === 'slide' ? '' : (modulo * dimension) + '%');
         }
 
         /**
          * Set dimensions for each slides
          */
-        function setSlidesDimensions(slide) {
-            if (angular.isDefined(slide)) {
-                // reset old value first
-                vm.slides[slide].element.css(vm.isHorizontal ? 'height' : 'width', '');
-                // then set the new one
-                vm.slides[slide].element.css(vm.isHorizontal ? 'width' : 'height', 100 / vm.options.displayed + '%');
+        function setSlidesDimensions(index) {
+            if (angular.isDefined(index) && vm.options.animation === 'slide') {
+                setItemDimensions(vm.slides[index], index);
                 return;
             }
             $timeout.cancel(vm.dimensionsTimeout);
             vm.dimensionsTimeout = $timeout(function() {
-                _.forEach(vm.slides, function(slide) {
-                    // reset old value first
-                    slide.element.css(vm.isHorizontal ? 'height' : 'width', '');
-                    // then set the new one
-                    slide.element.css(vm.isHorizontal ? 'width' : 'height', 100 / vm.options.displayed + '%');
+                _.forEach(vm.slides, function(slide, index) {
+                    setItemDimensions(slide, index);
                 });
                 move(vm.currentIndex, false, true);
             }, 200);
@@ -502,6 +535,7 @@
             setSlidesDimensions();
             setSliderDirection();
             setTransition();
+            setAnimationClass(vm.options.animation);
 
             if (vm.options.autoplay && !angular.isNumber(vm.options.sync)) {
                 play();
@@ -549,50 +583,80 @@
             move(index * vm.options.perSlide, true);
         }
 
+        function getShift (limits) {
+            var half = vm.options.displayed / 2;
+            if (parseInt(half) !== half && vm.options.centerActive && getRef() >= limits.down && getRef() < limits.up) {
+                return parseInt(half);
+            }
+            return 0;
+        }
+
+        function getLimits () {
+            var half = vm.options.displayed / 2;
+            return {
+                down: vm.options.centerActive ? half + 1 : 0,
+                up: vm.options.centerActive ? vm.slides.length - half : vm.slides.length - vm.options.displayed
+            };
+        }
+
         /**
          * Determine to which slide it has to slide
          * @return {Number} Slide index
          */
         function getLastInView() {
-            var index;
-            var ref = vm.options.sync && angular.isNumber(vm.options.sync) ? vm.options.sync : vm.currentIndex;
-            var half = Math.floor(vm.options.displayed / 2);
+            var index,
+                ref = getRef();
 
-            var limits = {
-                down: vm.options.centerActive ? half + 1 : 0,
-                up: vm.options.centerActive ? vm.slides.length - half : vm.slides.length - vm.options.displayed
-            };
+            var limits = getLimits();
 
-            if (limits.up < 0) {
-                limits.up = vm.slides.length;
-            }
+            if (limits.up < 0) limits.up = vm.slides.length;
+            if (ref < limits.down) index = ref < limits.down ? 0 : ref;
+            if (ref >= limits.down) index = ref < limits.up ? ref : vm.slides.length - vm.options.displayed;
 
-            if (ref < limits.down) {
-                index = ref < limits.down ? 0 : ref;
-            }
-
-            if (ref >= limits.down) {
-                index = ref < limits.up ? ref : vm.slides.length - vm.options.displayed;
-            }
-
-            if (half % 2 !== 1 && vm.options.centerActive && ref >= limits.down && ref < limits.up) {
-                index -= half;
-            }
+            index -= getShift(limits);
 
             return vm.slides[index].element[0];
         }
 
         function applyStyles(offset) {
-            if (vm.options.animation !== 'slide') return;
 
             var elementPos = getLastInView()[vm.isHorizontal ? 'offsetLeft' : 'offsetTop'];
 
             var property = vm.isHorizontal ? 'translateX' : 'translateY';
             var value = -(elementPos + (offset || 0)) + 'px';
 
-            angular.element(vm.kaarouselSlider).css({
-                'transform': property + '(' + value + ')'
-            });
+            if (vm.options.animation === 'slide') {
+                angular.element(vm.kaarouselSlider).css({
+                    'transform': property + '(' + value + ')',
+                    'height': ''
+                });
+            } else {
+                var styleObj = {
+                    'transform': ''
+                }, max;
+
+                if (vm.options.direction === 'horizontal') {
+                    max = _.max(_.where(vm.slides, {visible: true}), function (slide) {
+                        return slide.element[0].offsetHeight;
+                    }).element[0].offsetHeight;
+
+                    styleObj.height = max + 'px';
+                    styleObj.width = '';
+                } else {
+                    max = _.max(_.where(vm.slides, {visible: true}), function (slide) {
+                        return slide.element[0].offsetWidth;
+                    }).element[0].offsetWidth;
+
+                    styleObj.width = max + 'px';
+                    styleObj.height = '';
+                }
+
+                angular.element(vm.kaarouselSlider).css(styleObj);
+            }
+        }
+
+        function getRef () {
+            return angular.isNumber(vm.options.sync) ? vm.options.sync : vm.currentIndex;
         }
 
         /**
@@ -602,16 +666,17 @@
          * @param  {replace}            replace  don't increment index just re-apply styles
          */
         function move(forward, userMove, replace) {
+
             if (vm.options.beforeSlide) {
                 vm.options.beforeSlide()();
             }
 
-            vm.currentIndex = replace ? vm.currentIndex : getIndex(forward);
-            vm.currentPage = Math.floor(vm.currentIndex / vm.options.perSlide);
+            vm.currentIndex = replace ? getRef() : getIndex(forward);
+            vm.currentPage = Math.floor(getRef() / vm.options.perSlide);
 
-            applyStyles();
             setActive();
             setVisible();
+            applyStyles();
             setSettings();
 
             if (vm.currentIndex > vm.slides.length - vm.options.displayed && !vm.options.loop) {
@@ -635,9 +700,18 @@
 
         function setVisible() {
             _.forEach(vm.slides, function(slide, index) {
-                var max = vm.slides.length - vm.options.displayed;
-                var isEnd = vm.currentIndex > max && index >= max;
-                var isVisible = index >= vm.currentIndex && index < vm.currentIndex + vm.options.displayed || isEnd;
+                var max = vm.slides.length - vm.options.displayed,
+                    isVisible;
+
+                var shift = getShift(getLimits());
+
+                if (vm.options.animation !== 'slide') {
+                    isVisible = index >= vm.currentPage * vm.options.displayed - shift && index < (vm.currentPage + 1) * vm.options.displayed - shift;
+                } else {
+                    var isEnd = getRef() > max && index >= max;
+                    var ref = getRef() - shift;
+                    isVisible = index >= ref && index < ref + vm.options.displayed || isEnd;
+                }
 
                 slide.visible = isVisible;
                 slide.element[0].classList[isVisible ? 'add' : 'remove']('visible');
@@ -659,7 +733,7 @@
 
             /////////////////////
 
-            var index = vm.options.sync && angular.isNumber(vm.options.sync) ? vm.options.sync : vm.currentIndex;
+            var index = angular.isNumber(vm.options.sync) ? vm.options.sync : vm.currentIndex;
 
             vm.slides[index].element[0].classList.add('active');
             vm.slides[index].active = true;

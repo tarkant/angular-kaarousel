@@ -2,7 +2,7 @@ $pager-height: 20px;
 $pager-items-diameter: 10px;
 $pager-items-hover-scale: 1.4;
 
-kaarousel, [kaarousel] {
+.kaarousel {
     position: relative;
     display: block;
     clear: both;
@@ -57,7 +57,7 @@ kaarousel, [kaarousel] {
         width: 100%;
         transition: transform;
         transition-timing-function: ease;
-        will-change: transform;
+        will-change: transform, height;
 
         .kaarousel-slide {
             position: relative;
@@ -70,20 +70,20 @@ kaarousel, [kaarousel] {
                 pointer-events: none
             }
         }
-        &.fade-animation,
-        &.shuffle-animation {
+        &.fade-animation {
+            transition: height .2s ease;
+
             & > .kaarousel-slide {
                 position: absolute;
                 top: 0;
                 left: 0;
                 opacity: 0;
                 visibility: hidden;
-                z-index: 1;
-                &.selected,
+                transition: opacity, visibility;
+
                 &.visible {
                     opacity: 1;
                     visibility: visible;
-                    z-index: 2;
                 }
             }
         }

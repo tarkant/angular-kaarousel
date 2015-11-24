@@ -99,6 +99,7 @@
         }];
 
         vm.directions = [{id: 1, name: 'horizontal'}, {id: 2, name: 'vertical'}];
+        vm.animations = [{id: 1, name: 'slide'}, {id: 2, name: 'fade'}];
 
         vm.options = {
 
@@ -107,7 +108,7 @@
             autoplay: true,
             pauseOnHover: true,
 
-            centerActive: false,
+            centerActive: true,
             stopAfterAction: false,
             timeInterval: 3500,
             transitionDuration: 600,
@@ -122,13 +123,14 @@
             expand: true,
             loop: true,
             direction: 'horizontal',
+            animation: 'slide',
             minWidth: null,
 
             beforeSlide: function () {
-                $log.log('before slide callback');
+                // $log.log('before slide callback');
             },
             afterSlide: function () {
-                $log.log('after slide callback');
+                // $log.log('after slide callback');
             }
 
         };
