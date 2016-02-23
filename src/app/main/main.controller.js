@@ -6,7 +6,7 @@
         .controller('MainController', MainController);
 
     /** @ngInject */
-    function MainController($log) {
+    function MainController() {
         var vm = this;
 
         vm.hideFirstSlide = hideFirstSlide;
@@ -108,7 +108,7 @@
             autoplay: true,
             pauseOnHover: true,
 
-            centerActive: true,
+            centerActive: false,
             stopAfterAction: false,
             timeInterval: 3500,
             transitionDuration: 600,

@@ -67,7 +67,11 @@ body {
 }
 
 code {
+    margin-top: 16px;
     padding: 16px;
     background: #EEE;
     display: block;
+
+    border-radius: 3px;
+    box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.12);
 }

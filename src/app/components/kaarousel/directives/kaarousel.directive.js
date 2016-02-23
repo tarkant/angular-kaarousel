@@ -115,7 +115,7 @@
             vm.ready = true;
         }
 
-        function getPages () {
+        function getPages() {
             if (!vm.slides) return;
             return new Array(Math.ceil(vm.slides.length / vm.options.perSlide));
         }
@@ -192,14 +192,14 @@
             return options;
         }
 
-        function setAnimationClass (value) {
-            _.forEach(animations, function (name) {
+        function setAnimationClass(value) {
+            _.forEach(animations, function(name) {
                 vm.kaarouselSlider.classList.remove(name + '-animation');
             });
 
             vm.kaarouselSlider.classList.add(value + '-animation');
 
-            _.forEach(vm.slides, function (slide) {
+            _.forEach(vm.slides, function(slide) {
                 slide.element.css({
                     'transition-duration': value === 'slide' ? '' : vm.options.transitionDuration / 1000 + 's'
                 });
@@ -214,7 +214,7 @@
         function handleImportantChanges(option, value) {
             var fn;
 
-            switch(option) {
+            switch (option) {
                 case 'animation':
                     setAnimationClass(value);
                     break;
@@ -317,7 +317,10 @@
             }
             if (options.minWidth) {
                 var sliderWidth = vm.kaarouselSliderContainer.offsetWidth;
-                options.displayed = Math.floor(sliderWidth / options.minWidth);
+                var nbFitting = Math.floor(sliderWidth / options.minWidth);
+                if (nbFitting < options.displayed) {
+                    options.displayed = nbFitting;
+                }
                 if (options.displayed < 1) {
                     options.displayed = 1;
                 }
@@ -334,7 +337,7 @@
             return options;
         }
 
-        function setItemDimensions (item, index) {
+        function setItemDimensions(item, index) {
             var dimension = 100 / vm.options.displayed,
                 modulo = index % vm.options.displayed;
 
@@ -583,16 +586,16 @@
             move(index * vm.options.perSlide, true);
         }
 
-        function getShift (limits) {
+        function getShift(limits) {
             var half = vm.options.displayed / 2;
             if (parseInt(half) !== half && vm.options.centerActive && getRef() >= limits.down && getRef() < limits.up) {
-                return parseInt(half);
+                return Math.floor(half);
             }
             return 0;
         }
 
-        function getLimits () {
-            var half = vm.options.displayed / 2;
+        function getLimits() {
+            var half = Math.floor(vm.options.displayed / 2);
             return {
                 down: vm.options.centerActive ? half + 1 : 0,
                 up: vm.options.centerActive ? vm.slides.length - half : vm.slides.length - vm.options.displayed
@@ -620,42 +623,50 @@
 
         function applyStyles(offset) {
 
-            var elementPos = getLastInView()[vm.isHorizontal ? 'offsetLeft' : 'offsetTop'];
-
-            var property = vm.isHorizontal ? 'translateX' : 'translateY';
-            var value = -(elementPos + (offset || 0)) + 'px';
-
             if (vm.options.animation === 'slide') {
+
+                var elementPos = getLastInView()[vm.isHorizontal ? 'offsetLeft' : 'offsetTop'];
+                var property = vm.isHorizontal ? 'translateX' : 'translateY';
+                var value = -(elementPos + (offset || 0)) + 'px';
+
                 angular.element(vm.kaarouselSlider).css({
                     'transform': property + '(' + value + ')',
-                    'height': ''
+                    'height': '',
+                    'width': ''
                 });
             } else {
-                var styleObj = {
-                    'transform': ''
-                }, max;
+
+                var max;
 
                 if (vm.options.direction === 'horizontal') {
-                    max = _.max(_.where(vm.slides, {visible: true}), function (slide) {
+                    max = _.max(_.where(vm.slides, {
+                        visible: true
+                    }), function(slide) {
                         return slide.element[0].offsetHeight;
                     }).element[0].offsetHeight;
 
-                    styleObj.height = max + 'px';
-                    styleObj.width = '';
+                    angular.element(vm.kaarouselSlider).css({
+                        'height': max + 'px',
+                        'transform': '',
+                        'width': ''
+                    });
                 } else {
-                    max = _.max(_.where(vm.slides, {visible: true}), function (slide) {
+                    max = _.max(_.where(vm.slides, {
+                        visible: true
+                    }), function(slide) {
                         return slide.element[0].offsetWidth;
                     }).element[0].offsetWidth;
 
-                    styleObj.width = max + 'px';
-                    styleObj.height = '';
+                    angular.element(vm.kaarouselSlider).css({
+                        'width': max + 'px',
+                        'transform': '',
+                        'height': ''
+                    });
                 }
-
-                angular.element(vm.kaarouselSlider).css(styleObj);
             }
         }
 
-        function getRef () {
+        function getRef() {
             return angular.isNumber(vm.options.sync) ? vm.options.sync : vm.currentIndex;
         }
 
@@ -706,7 +717,7 @@
                 var shift = getShift(getLimits());
 
                 if (vm.options.animation !== 'slide') {
-                    isVisible = index >= vm.currentPage * vm.options.displayed - shift && index < (vm.currentPage + 1) * vm.options.displayed - shift;
+                    isVisible = index >= vm.currentPage * vm.options.displayed && index < (vm.currentPage + 1) * vm.options.displayed;
                 } else {
                     var isEnd = getRef() > max && index >= max;
                     var ref = getRef() - shift;

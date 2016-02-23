@@ -6,12 +6,12 @@ $pager-items-hover-scale: 1.4;
     position: relative;
     display: block;
     clear: both;
-    padding-bottom: $pager-height;
     width: 100%;
 
     kaarousel-wrapper {
         display: block;
         position: relative;
+        margin-bottom: $pager-height;
     }
 
     // WRAPPER
@@ -217,6 +217,7 @@ $pager-items-hover-scale: 1.4;
             left: 0;
             height: 100%;
             width: calc(100% - 20px);
+            margin-bottom: 0;
         }
         kaarousel-slider-container {
             position: absolute;
