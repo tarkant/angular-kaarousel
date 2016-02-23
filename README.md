@@ -29,6 +29,7 @@ Full angularJS carousel
         loop="conf.loop"
         min-width="conf.minWidth"
         expand="conf.expand"
+        alwaysFill="conf.alwaysFill"
         transition-duration="conf.transitionDuration"
         before-slide="conf.beforeSlide"
         after-slide="conf.afterSlide">
@@ -77,12 +78,11 @@ Default configuration is :
         beforeSlide: null,
         minWidth: null,
         expand: true,
+        alwaysFill: true,
         swipeThreshold: 100
     };
 ```
 
 ## Todo
 
-- Fade animation
-- add code sample to online doc
 - add tests
