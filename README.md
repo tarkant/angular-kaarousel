@@ -4,6 +4,8 @@ Full angularJS carousel
 
 [DEMO](http://corentin-gautier.github.io/angular-kaarousel/)
 
+![gif](http://i.imgur.com/saSLBxc.gif)
+
 =================
 
 ## How to use it
