@@ -6,7 +6,7 @@
         .controller('MainController', MainController);
 
     /** @ngInject */
-    function MainController() {
+    function MainController($log) {
         var vm = this;
 
         vm.hideFirstSlide = hideFirstSlide;
@@ -104,14 +104,14 @@
         vm.options = {
 
             displayed: 5,
-            perSlide: 5,
+            perSlide: 3,
             autoplay: true,
             pauseOnHover: true,
 
-            centerActive: false,
+            centerActive: true,
             stopAfterAction: false,
-            timeInterval: 3500,
-            transitionDuration: 600,
+            timeInterval: 2000,
+            transitionDuration: 800,
 
             hideNav: false,
             hidePager: false,
@@ -125,12 +125,13 @@
             direction: 'horizontal',
             animation: 'slide',
             minWidth: null,
+            alwaysFill: true,
 
             beforeSlide: function () {
-                // $log.log('before slide callback');
+                $log.log('before slide callback');
             },
             afterSlide: function () {
-                // $log.log('after slide callback');
+                $log.log('after slide callback');
             }
 
         };

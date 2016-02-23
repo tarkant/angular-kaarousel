@@ -76,6 +76,10 @@
             <md-switch aria-label="Expand slides" ng-model="main.options.expand"></md-switch>
         </md-list-item>
         <md-list-item>
+            <span flex>Always fill</span>
+            <md-switch aria-label="Always fill" ng-model="main.options.alwaysFill"></md-switch>
+        </md-list-item>
+        <md-list-item>
             <span flex>Pause on hover</span>
             <md-switch aria-label="Pause on hover" ng-model="main.options.pauseOnHover"></md-switch>
         </md-list-item>
@@ -122,15 +126,11 @@
     <md-toolbar class="md-tall md-whiteframe-z2">
         <div class="md-toolbar-tools">
             <span flex></span>
-            <md-button class="md-icon-button">
-                <md-icon>search</md-icon>
-            </md-button>
-            <md-button class="md-icon-button">
-                <md-icon>favorite</md-icon>
-            </md-button>
-            <md-button class="md-icon-button">
-                <md-icon>more_vert</md-icon>
-            </md-button>
+            <a href="https://github.com/corentin-gautier/angular-kaarousel" target="_blank">
+                <md-button class="md-icon-button">
+                    <md-icon>favorite</md-icon>
+                </md-button>
+            </a>
         </div>
         <div class="md-toolbar-tools md-toolbar-tools-bottom">
             <span>Angular Kaarousel</span>
@@ -160,6 +160,7 @@
             loop="main.options.loop"
             min-width="main.options.minWidth"
             expand="main.options.expand"
+            always-fill="main.options.alwaysFill"
             transition-duration="main.options.transitionDuration"
             before-slide="main.options.beforeSlide"
             after-slide="main.options.afterSlide">
@@ -211,6 +212,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;pager-on-hover{{main.options.pagerOnHover ? '="' + main.options.pagerOnHover + '"' : ''}}<br >
                 &nbsp;&nbsp;&nbsp;&nbsp;swipable{{main.options.swipable ? '="' + main.options.swipable + '"' : ''}}<br >
                 &nbsp;&nbsp;&nbsp;&nbsp;expand{{main.options.expand ? '="' + main.options.expand + '"' : ''}}<br >
+                &nbsp;&nbsp;&nbsp;&nbsp;alwaysFill{{main.options.alwaysFill ? '="' + main.options.alwaysFill + '"' : ''}}<br >
                 &nbsp;&nbsp;&nbsp;&nbsp;sync="{{main.options.sync}}"<br >
                 &nbsp;&nbsp;&nbsp;&nbsp;before-slide="function"<br >
                 &nbsp;&nbsp;&nbsp;&nbsp;after-slide="function"<br >

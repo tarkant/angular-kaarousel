@@ -34,7 +34,8 @@
                 afterSlide: '&?',
                 beforeSlide: '&?',
                 minWidth: '=?',
-                expand: '=?'
+                expand: '=?',
+                alwaysFill: '=?'
             },
             templateUrl: 'app/components/kaarousel/templates/angular-kaarousel.html',
             transclude: true,
@@ -49,8 +50,10 @@
     function KaarouselController($scope, $element, $attrs, $interval, $window, $timeout, $swipe) {
 
         // @todo some settings don't work ( mainly when center active )
-
         var vm = this;
+
+        var PREFIX = 'kaarousel';
+
         var booleanAttributes = [
             'autoplay',
             'pauseOnHover',
@@ -62,10 +65,41 @@
             'pagerOnHover',
             'swipable',
             'loop',
-            'expand'
+            'expand',
+            'alwaysFill'
         ];
 
-        var animations = ['slide', 'fade'];
+        var animations = [
+            'slide',
+            'fade'
+        ];
+
+        var kOptions = [
+            'displayed',
+            'perSlide',
+            'autoplay',
+            'direction',
+            'pauseOnHover',
+            'centerActive',
+            'timeInterval',
+            'transitionDuration',
+            'updateRate',
+            'stopAfterAction',
+            'hideNav',
+            'hidePager',
+            'navOnHover',
+            'pagerOnHover',
+            'swipable',
+            'sync',
+            'animation',
+            'loop',
+            'options',
+            'afterSlide',
+            'beforeSlide',
+            'minWidth',
+            'expand',
+            'alwaysFill'
+        ];
 
         vm.init = init;
         vm.register = register;
@@ -98,7 +132,8 @@
             beforeSlide: null,
             minWidth: null,
             expand: true,
-            swipeThreshold: 100
+            swipeThreshold: 100,
+            alwaysFill: true
         };
 
         vm.state = {};
@@ -107,10 +142,8 @@
 
         function init() {
             setElements();
-            setClasses();
             setOptions();
             setWatchers();
-            setSettings();
 
             vm.ready = true;
         }
@@ -122,21 +155,17 @@
 
         function setElements() {
             vm.kaarousel = $element[0];
-            vm.kaarousel.classList.add('kaarousel');
+            vm.kaarousel.classList.add(PREFIX);
 
             //////////////////////
 
-            vm.kaarouselSliderContainer = $element[0].querySelector('kaarousel-slider-container');
-            vm.kaarouselWrapper = $element[0].querySelector('kaarousel-wrapper');
-            vm.kaarouselSlider = $element[0].querySelector('kaarousel-slider');
-        }
-
-        function setClasses() {
-            vm.kaarousel.classList.add('kaarousel');
+            vm.kaarouselSliderContainer = vm.kaarousel.querySelector(PREFIX + '-slider-container');
+            vm.kaarouselWrapper = vm.kaarousel.querySelector(PREFIX + '-wrapper');
+            vm.kaarouselSlider = vm.kaarousel.querySelector(PREFIX + '-slider');
         }
 
         function getScopeOptions() {
-            var options;
+            var options = {};
             if (!_.isEmpty($scope.options)) {
                 options = angular.copy($scope.options);
 
@@ -146,31 +175,9 @@
 
                 return options;
             }
-            options = {
-                displayed: $scope.displayed,
-                perSlide: $scope.perSlide,
-                autoplay: $scope.autoplay,
-                direction: $scope.direction,
-                pauseOnHover: $scope.pauseOnHover,
-                centerActive: $scope.centerActive,
-                timeInterval: $scope.timeInterval,
-                transitionDuration: $scope.transitionDuration,
-                updateRate: $scope.updateRate,
-                stopAfterAction: $scope.stopAfterAction,
-                hideNav: $scope.hideNav,
-                hidePager: $scope.hidePager,
-                navOnHover: $scope.navOnHover,
-                pagerOnHover: $scope.pagerOnHover,
-                swipable: $scope.swipable,
-                sync: $scope.sync,
-                animation: $scope.animation,
-                loop: $scope.loop,
-                options: $scope.options,
-                afterSlide: $scope.afterSlide,
-                beforeSlide: $scope.beforeSlide,
-                minWidth: $scope.minWidth,
-                expand: $scope.expand || true
-            };
+            _.forEach(kOptions, function(option) {
+                options[option] = angular.isDefined($scope[option]) ? $scope[option] : vm.defaultOptions[option];
+            });
 
             options = assumeBoolean(options);
 
@@ -215,6 +222,10 @@
             var fn;
 
             switch (option) {
+                case 'timeInterval':
+                    stop();
+                    play();
+                    break;
                 case 'animation':
                     setAnimationClass(value);
                     break;
@@ -240,8 +251,14 @@
                 case 'centerActive':
                     move(vm.currentIndex, false, true);
                     break;
+                case 'perSlide':
+                    move(vm.currentIndex, false, true);
+                    break;
                 case 'minWidth':
                     setSlidesDimensions();
+                    break;
+                case 'alwaysFill':
+                    vm.move(vm.currentIndex, false, true);
                     break;
             }
 
@@ -293,13 +310,11 @@
         function setOptions(option, value) {
             vm.options = _.merge({}, vm.defaultOptions, checkValues(getScopeOptions()));
 
-
             if (option) {
                 vm.options[option] = value;
                 vm.options = checkValues(vm.options);
                 handleImportantChanges(option, vm.options[option]);
             } else {
-                vm.options = checkValues(vm.options);
                 setDefaultState();
             }
 
@@ -403,10 +418,10 @@
             var response;
             switch (type) {
                 case 'prev':
-                    response = vm.currentIndex < vm.options.displayed;
+                    response = vm.currentIndex < vm.options.perSlide;
                     break;
                 case 'next':
-                    response = vm.currentIndex > vm.slides.length - vm.options.displayed;
+                    response = vm.currentIndex > (vm.slides.length - 1) - vm.options.perSlide;
                     break;
             }
             return response;
@@ -433,8 +448,8 @@
             });
 
             // On resize stop & play after it stopped
-            $window.addEventListener('resize', _.debounce(resetAfterWindowResize, 500));
             $window.addEventListener('resize', function() {
+                _.debounce(resetAfterWindowResize, 500)();
                 if (vm.isPlaying) {
                     stop();
                 }
@@ -610,6 +625,14 @@
             var index,
                 ref = getRef();
 
+            if (!vm.options.alwaysFill) {
+                var half = vm.options.displayed / 2;
+                if (vm.options.centerActive && ref > half) {
+                    ref -= parseInt(half) !== half ? Math.floor(half) : 0;
+                }
+                return vm.slides[ref].element[0];
+            }
+
             var limits = getLimits();
 
             if (limits.up < 0) limits.up = vm.slides.length;
@@ -624,7 +647,6 @@
         function applyStyles(offset) {
 
             if (vm.options.animation === 'slide') {
-
                 var elementPos = getLastInView()[vm.isHorizontal ? 'offsetLeft' : 'offsetTop'];
                 var property = vm.isHorizontal ? 'translateX' : 'translateY';
                 var value = -(elementPos + (offset || 0)) + 'px';
@@ -901,8 +923,6 @@
                 }
             });
         }
-
     }
-
 
 })();
