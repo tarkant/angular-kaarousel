@@ -137,9 +137,9 @@
         </div>
     </md-toolbar>
 
-    <md-content flex class="md-padding" layout="column">
+    <md-content class="md-padding" layout="column" layout-align="center stretch">
 
-        <div flex
+        <div
             ng-cloak
             kaarousel
             displayed="main.options.displayed"
@@ -191,8 +191,8 @@
             </div>
         </div>
 
-        <div layout="row" flex>
-            <code flex>
+        <div>
+            <code>
                 &lt;kaarousel <br >
                 &nbsp;&nbsp;&nbsp;&nbsp;displayed="{{main.options.displayed}}"<br >
                 &nbsp;&nbsp;&nbsp;&nbsp;per-slide="{{main.options.perSlide}}"<br >
@@ -218,10 +218,9 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;after-slide="function"<br >
                 &gt;
             </code>
-        </div>
-
-        <div layout="row" layout-align="end center" flex>
-            <md-button class="md-primary md-raised" ng-click="main.hideFirstSlide()">Hide first slide</md-button>
+            <div layout="row" layout-align="end center">
+                <md-button class="md-primary md-raised" ng-click="main.hideFirstSlide()">Hide first slide</md-button>
+            </div>
         </div>
 
     </md-content>

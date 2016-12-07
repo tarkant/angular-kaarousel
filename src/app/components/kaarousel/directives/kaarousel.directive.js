@@ -661,7 +661,7 @@
                 var max;
 
                 if (vm.options.direction === 'horizontal') {
-                    max = _.max(_.where(vm.slides, {
+                    max = _.max(_.filter(vm.slides, {
                         visible: true
                     }), function(slide) {
                         return slide.element[0].offsetHeight;
@@ -673,7 +673,7 @@
                         'width': ''
                     });
                 } else {
-                    max = _.max(_.where(vm.slides, {
+                    max = _.max(_.filter(vm.slides, {
                         visible: true
                     }), function(slide) {
                         return slide.element[0].offsetWidth;
@@ -755,7 +755,7 @@
          * Set active class
          */
         function setActive() {
-            var lastActive = _.where(vm.slides, {
+            var lastActive = _.filter(vm.slides, {
                 active: true
             });
 
