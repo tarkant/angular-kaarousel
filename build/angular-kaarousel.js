@@ -2,6 +2,7 @@
 
     'use strict';
 
+    KaarouselController.$inject = ["$scope", "$element", "$attrs", "$interval", "$window", "$timeout", "$swipe"];
     angular
         .module('angular-kaarousel', ['ngTouch'])
         .directive('kaarousel', kaarousel);
@@ -661,7 +662,7 @@
                 var max;
 
                 if (vm.options.direction === 'horizontal') {
-                    max = _.max(_.where(vm.slides, {
+                    max = _.max(_.filter(vm.slides, {
                         visible: true
                     }), function(slide) {
                         return slide.element[0].offsetHeight;
@@ -673,7 +674,7 @@
                         'width': ''
                     });
                 } else {
-                    max = _.max(_.where(vm.slides, {
+                    max = _.max(_.filter(vm.slides, {
                         visible: true
                     }), function(slide) {
                         return slide.element[0].offsetWidth;
@@ -755,7 +756,7 @@
          * Set active class
          */
         function setActive() {
-            var lastActive = _.where(vm.slides, {
+            var lastActive = _.filter(vm.slides, {
                 active: true
             });
 
@@ -924,7 +925,6 @@
             });
         }
     }
-    KaarouselController.$inject = ["$scope", "$element", "$attrs", "$interval", "$window", "$timeout", "$swipe"];
 
 })();
 
@@ -962,4 +962,4 @@
 
 })();
 
-angular.module("angular-kaarousel").run(["$templateCache", function($templateCache) {$templateCache.put("app/components/kaarousel/templates/angular-kaarousel.html","<kaarousel-wrapper><kaarousel-slider-container><kaarousel-slider ng-transclude=\"\" class=\"kaarousel-slider\"></kaarousel-slider></kaarousel-slider-container><kaarousel-nav ng-class=\"{\'is-hidden\': !kc.navigation.visible}\"><kaarousel-prev ng-click=\"kc.move(null, true)\" ng-class=\"{\'is-hidden\': !kc.navigation.prev.visible}\">PREV</kaarousel-prev><kaarousel-next ng-click=\"kc.move(true, true)\" ng-class=\"{\'is-hidden\': !kc.navigation.next.visible}\">NEXT</kaarousel-next></kaarousel-nav><kaarousel-pager ng-class=\"{\'is-hidden\': !kc.pager.visible}\"><ul><li ng-repeat=\"i in kc.getPages() track by $index\" ng-click=\"kc.movePage($index)\" ng-class=\"{selected: $index === kc.currentPage}\">{{$index}}</li></ul></kaarousel-pager></kaarousel-wrapper>");}]);
+angular.module("angularKaarousel").run(["$templateCache", function($templateCache) {$templateCache.put("app/components/kaarousel/templates/angular-kaarousel.html","<kaarousel-wrapper><kaarousel-slider-container><kaarousel-slider ng-transclude=\"\" class=\"kaarousel-slider\"></kaarousel-slider></kaarousel-slider-container><kaarousel-nav ng-class=\"{\'is-hidden\': !kc.navigation.visible}\"><kaarousel-prev ng-click=\"kc.move(null, true)\" ng-class=\"{\'is-hidden\': !kc.navigation.prev.visible}\">PREV</kaarousel-prev><kaarousel-next ng-click=\"kc.move(true, true)\" ng-class=\"{\'is-hidden\': !kc.navigation.next.visible}\">NEXT</kaarousel-next></kaarousel-nav><kaarousel-pager ng-class=\"{\'is-hidden\': !kc.pager.visible}\"><ul><li ng-repeat=\"i in kc.getPages() track by $index\" ng-click=\"kc.movePage($index)\" ng-class=\"{selected: $index === kc.currentPage}\">{{$index}}</li></ul></kaarousel-pager></kaarousel-wrapper>");}]);
