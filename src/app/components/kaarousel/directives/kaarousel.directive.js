@@ -140,8 +140,9 @@
 
         /////////////////////////
 
+        setElements();
+
         function init() {
-            setElements();
             setOptions();
             setWatchers();
 
@@ -529,10 +530,11 @@
                 vm.slides[index] = slide;
             } else {
                 vm.slides.splice(index, 0, slide);
+            }
+
+            if (vm.ready) {
+                setOptions();
                 setSlidesDimensions(index);
-                $timeout(function() {
-                    move(vm.currentIndex, null, true);
-                }, 150);
             }
         }
 
@@ -700,7 +702,7 @@
          */
         function move(forward, userMove, replace) {
 
-            if (vm.options.beforeSlide) {
+            if (vm.options && vm.options.beforeSlide) {
                 vm.options.beforeSlide()();
             }
 

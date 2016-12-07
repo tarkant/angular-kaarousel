@@ -14,26 +14,19 @@ body {
                         background: #E82C2C;
                     }
                 }
-                &.visible {
-                    md-card {
-                        // outline:1px solid #FFB400;
-                        // box-shadow: 0px 5px 22px rgba(0, 0, 0, .14);
-                    }
-                }
             }
         }
     }
     kaarousel.direction-horizontal, [kaarousel].direction-horizontal {
         kaarousel-slider {
             .kaarousel-slide {
-                vertical-align: middle;
-
+                vertical-align: top;
             }
         }
     }
     kaarousel.direction-vertical, [kaarousel].direction-vertical {
         width: 250px;
-        height: 400px;
+        height: 600px;
 
         kaarousel-slider .kaarousel-slide, kaarousel-slider .kaarousel-slide {
             overflow: hidden;

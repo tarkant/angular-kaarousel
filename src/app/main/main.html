@@ -167,7 +167,7 @@
             <div
                 kaarousel-slide
                 ng-if="!$first || ($first && !main.hideFirst)"
-                ng-repeat="slide in ::main.data | orderBy:'rank' track by $index">
+                ng-repeat="slide in main.data | orderBy:'rank' track by $index">
                 <!-- Slide content -->
                 <md-card class="thumbnail">
                     <md-toolbar>
@@ -218,9 +218,6 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;after-slide="function"<br >
                 &gt;
             </code>
-            <div layout="row" layout-align="end center">
-                <md-button class="md-primary md-raised" ng-click="main.hideFirstSlide()">Hide first slide</md-button>
-            </div>
         </div>
 
     </md-content>

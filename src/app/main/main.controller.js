@@ -128,10 +128,10 @@
             alwaysFill: true,
 
             beforeSlide: function () {
-                $log.log('before slide callback');
+                // $log.info('before slide callback');
             },
             afterSlide: function () {
-                $log.log('after slide callback');
+                $log.info('after slide callback');
             }
 
         };
