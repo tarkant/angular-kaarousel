@@ -124,7 +124,7 @@ gulp.task('partial-kaarousel', ['clean-kaarousel'], function() {
             quotes: true
         }))
         .pipe($.angularTemplatecache('kaarousel-template.js', {
-            module: 'angularKaarousel',
+            module: 'angular-kaarousel',
             root: 'app/components/kaarousel/'
         }))
         .pipe(gulp.dest(conf.paths.tmp + '/partials/kaarousel/'));
