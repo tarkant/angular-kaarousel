@@ -7,6 +7,21 @@ Full angularJS carousel
 ![gif](http://i.imgur.com/saSLBxc.gif)
 
 =================
+## Installation
+
+You can install this module either using bower :
+
+`bower install --save angular-kaarousel`
+
+or if you prefer npm :
+
+`npm install angular-kaarousel`
+
+Make sure to add the module to your app :
+
+```javascript
+angular.module('myApp', ['angular-kaarousel']);
+```
 
 ## How to use it
 
